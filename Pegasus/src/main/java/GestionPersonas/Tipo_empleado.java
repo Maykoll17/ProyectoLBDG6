@@ -1,0 +1,5 @@
+package GestionPersonas;
+
+public enum Tipo_empleado {
+    ADMINISTRADOR, ASISTENTE, CAJERO, DOCTOR, EMPLEADO, ENFERMERO, FARMACEUTICO, RECEPCIONISTA
+}
