@@ -5,14 +5,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexion {
-    private String url = "jdbc:mysql://localhost:3306/PegasusBD"; // URL 
-    private String user = "root"; // Usuario 
-    private String password = "SGHPegasus"; // Contraseña 
+    private String url = "jdbc:oracle:thin:@localhost:1521:XE"; 
+    private String user = "tu_usuario"; 
+    private String password = "tu_contraseña"; 
     private Connection connection;
 
     public Connection conectar() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); 
+            Class.forName("oracle.jdbc.driver.OracleDriver"); 
             connection = DriverManager.getConnection(url, user, password); 
             System.out.println("Conexión exitosa a la base de datos.");
         } catch (ClassNotFoundException e) {
@@ -26,11 +26,10 @@ public class Conexion {
     public void desconectar() {
         if (connection != null) {
             try {
-                connection.close(); 
+                connection.close();
                 System.out.println("Conexión cerrada.");
             } catch (SQLException e) {
-                System.out.println("Error al cerrar la conexión: " + 
-                        e.getMessage());
+                System.out.println("Error al cerrar la conexión: " + e.getMessage());
             }
         }
     }
