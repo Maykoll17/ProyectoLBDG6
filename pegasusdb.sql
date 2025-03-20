@@ -1,3 +1,4 @@
+
 drop database pegasusbd;
 
 create database pegasusbd;
@@ -12,15 +13,21 @@ create table usuarios(
 
 
 create table empleados(
-	cedula varchar(15) primary KEY not null,
-    nombre varchar(50) not null,
-    apellidos varchar(100) not null,
-    telefono varchar(15),
-    direccion varchar(200),
-    correo varchar(200),
-    tipoEmpleado enum("ADMINISTRADOR", "ASISTENTE", "CAJERO", "DOCTOR", "EMPLEADO", "ENFERMERO", "FARMACEUTICO", "RECEPCIONISTA") not null,
-    estado enum("ACTIVO", "INACTIVO"),
-    salarioPorHora decimal(12, 2)
+	cedula varchar2(15) primary KEY not null,
+    nombre varchar2(50) not null,
+    apellidos varchar2(100) not null,
+    telefono varchar2(15),
+    direccion varchar2(200),
+    correo varchar2(200),
+    tipoEmpleado VARCHAR2(70) NOT NULL CHECK (tipoEmpleado in ('ADMINISTRADOR', 'ASISTENTE', 'CAJERO', 'DOCTOR', 'EMPLEADO', 'ENFERMERO', 'FARMACEUTICO', 'RECEPCIONISTA')),
+    estado VARCHAR2(10) CHECK (estado IN ('ACTIVO', 'INACTIVO')),
+    salarioPorHora NUMBER(12, 2)
+);
+
+create table pagos_empleados(
+    cedula varchar2(15) not null,
+    Remuneracion VARCHAR2(10) CHECK (Remuneracion IN ('Aplicado', 'Denegado')),
+    constraint fk_empleados_cedula foreign key (cedula) references empleados (cedula)
 );
 
 create table pacientes(
@@ -30,70 +37,64 @@ create table pacientes(
     telefono varchar(15),
     direccion varchar(200),
     correo varchar(200),
-    estado enum("AMBULATORIO", "HOSPITALIZADO", "OBSERVACION", "URGENCIAS"),
+    estado varchar(25) NOT NULL CHECK(estado in ('AMBULATORIO', 'HOSPITALIZADO', 'OBSERVACION', 'URGENCIAS','FALLECIDO')),
     deuda decimal(12, 2) not null
 );
 
 create table citas_pacientes_empleados(
-	codigo int auto_increment primary KEY not null,
-	cedulaPaciente varchar(15) not null,
+    codigo int generated as identity primary key not null,
+    cedulaPaciente varchar(15) not null,
     cedulaEmpleado varchar(15) not null,
-    fecha datetime,
+    fecha date,
     sala int,
-    asunto enum("CIRUJIA", "CONSULTA", "EXAMEN", "CONTROL", "REHABILITACION", "VACUNACION"),
-    FOREIGN KEY (cedulaPaciente) REFERENCES pacientes(cedula),
-    FOREIGN KEY (cedulaEmpleado) REFERENCES empleados(cedula)
+    asunto varchar(30) NOT NULL CHECK(asunto IN ('CIRUJIA', 'CONSULTA', 'EXAMEN', 'CONTROL', 'REHABILITACION', 'VACUNACION')),
+    constraint fk_p_cedula FOREIGN KEY (cedulaPaciente) REFERENCES pacientes(cedula),
+    constraint fk_e_cedula FOREIGN KEY (cedulaEmpleado) REFERENCES empleados(cedula)
 );
-
 CREATE TABLE Salas (
-	codigo INT AUTO_INCREMENT PRIMARY KEY,
+    codigo INT GENERATED AS IDENTITY PRIMARY KEY,
     capacidad VARCHAR(200) NOT NULL,
-    tipoSala ENUM("Cuidados", "Cuidados_intensivos", "Espera", "Operacion") NOT NULL,
-    estado ENUM("Disponible", "Alquilada", "Mantenimiento") NOT NULL,
+    tipoSala VARCHAR(30) NOT NULL CHECK (tipoSala IN ('Cuidados', 'Cuidados_intensivos', 'Espera', 'Operacion')),
+    estado VARCHAR(30) NOT NULL CHECK (estado IN ('Disponible', 'Alquilada', 'Mantenimiento')),
     precioPorHora DECIMAL(10, 2) NOT NULL
 );
-
 CREATE TABLE Alquileres (
-	codigo INT AUTO_INCREMENT PRIMARY KEY, -- Para cada alqiuiler, es auto incrementable
-    sala_codigo INT NOT NULL, -- Codigo de la bicicleta que se alquila
+    codigo INT GENERATED AS IDENTITY PRIMARY KEY, 
+    sala_codigo INT NOT NULL, 
     doctor VARCHAR(200) NOT NULL,
-    fechaInicio DATETIME NOT NULL,
-	fechaFin DATETIME,
+    fechaInicio DATE NOT NULL, 
+    fechaFin DATE, 
     total DECIMAL(10, 2),
-	FOREIGN KEY (sala_codigo) REFERENCES Salas(codigo)
+    FOREIGN KEY (sala_codigo) REFERENCES Salas(codigo)
 );
 
 
-
-
-
-create table medicamentos(
-	codigo int auto_increment primary key,
-    nombre varchar(50) not null, 
-    precio decimal(10,2) not null,
-    cantidad int not null
+CREATE TABLE medicamentos (
+    codigo INT GENERATED AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR2(50) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    cantidad INT NOT NULL,
+    informacion VARCHAR2(257) NOT NULL 
 );
-
 create table medsReservadosPacientes(
-	codigo int auto_increment primary key,
+	codigo int generated as identity primary key,
     cedulaPaciente varchar(15) not null,
     codigoMed int not null,
     cantidad int not null,  
-    foreign key (cedulaPaciente) references pacientes(cedula),
-    foreign key (codigoMed) references medicamentos(codigo)
+    constraint fk_cedulapaciente foreign key (cedulaPaciente) references pacientes(cedula),
+    constraint  fk_codigomed foreign key (codigoMed) references medicamentos(codigo)
 );
 
-
-create table facturas(
-	codigo int auto_increment not null primary key,
-    detalle ENUM('MEDICAMENTO', 'CIRUJIA', 'CONSULTA', 'EXAMEN', 'CONTROL', 'REHABILITACION', 'VACUNACION') NOT NULL,
-    monto decimal(12,2) not null,
-    cedulaPaciente varchar(15) not null,
-    estado ENUM("COBRADO", "PENDIENTE") not null,
-    codigoMedReserva int not null,
-    foreign key (cedulaPaciente) references pacientes(cedula),
-    foreign key (codigoMedReserva) references medsReservadosPacientes(codigo)
-);
+CREATE TABLE facturas (
+    codigo INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY, -- Reemplazo de AUTO_INCREMENT
+    detalle VARCHAR2(30) NOT NULL CHECK (detalle IN ('MEDICAMENTO', 'CIRUJIA', 'CONSULTA', 'EXAMEN', 'CONTROL', 'REHABILITACION', 'VACUNACION')), -- Reemplazo de ENUM
+    monto DECIMAL(12,2) NOT NULL,
+    cedulaPaciente VARCHAR2(15) NOT NULL,
+    estado VARCHAR2(15) NOT NULL CHECK (estado IN ('COBRADO', 'PENDIENTE')), -- Reemplazo de ENUM
+    codigoMedReserva INT NOT NULL,
+    CONSTRAINT fk_cedula_Paciente FOREIGN KEY (cedulaPaciente) REFERENCES pacientes(cedula),
+    CONSTRAINT fk_codigoMedReserva FOREIGN KEY (codigoMedReserva) REFERENCES medsReservadosPacientes(codigo)
+);/* Los insert solo funciona el Mysql
 
 INSERT INTO empleados (cedula, nombre, apellidos, telefono, direccion, correo, tipoEmpleado, estado, salarioPorHora) VALUES
 ('123456789', 'Juan', 'Pérez González', '60123456', 'San José, Avenida Central', 'juan.perez@example.com', 'ADMINISTRADOR', 'ACTIVO', 2500.00),
@@ -177,113 +178,161 @@ FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE REFERENCED_TABLE_NAME = 'pacientes' AND TABLE_SCHEMA = 'pegasusbd';
 
 SELECT * FROM 
- WHERE cedulaPaciente = '321654987';
+ WHERE cedulaPaciente = '321654987';*/
+
+
 
 
 ------------------
 CRUD para la tabla Empleados
 ------------------
-DELIMITER//
 
-CREATE PROCEDURE sp_agregar_empleado(IN cedula VARCHAR(20), IN nombre 
-VARCHAR(50), IN apellidos VARCHAR(50), IN telefono VARCHAR(15), IN direccion 
-VARCHAR(100), IN correo VARCHAR(50), IN tipo_empleado VARCHAR(20), IN estado 
-VARCHAR(20), IN salarioPorHora DECIMAL(10,2))
+CREATE OR REPLACE PROCEDURE sp_agregar_empleado(
+    cedula IN VARCHAR2, 
+    nombre IN VARCHAR2, 
+    apellidos IN VARCHAR2, 
+    telefono IN VARCHAR2, 
+    direccion IN VARCHAR2, 
+    correo IN VARCHAR2, 
+    tipo_empleado IN VARCHAR2, 
+    estado IN VARCHAR2, 
+    salarioPorHora IN NUMBER)
+IS
 BEGIN
     INSERT INTO empleados (cedula, nombre, apellidos, telefono, direccion, 
     correo, tipoEmpleado, estado, salarioPorHora)
     VALUES (cedula, nombre, apellidos, telefono, direccion, correo, 
     tipo_empleado, estado, salarioPorHora);
-END //
+END;
 
-CREATE PROCEDURE sp_modificar_empleado(IN cedula VARCHAR(20), IN nombre 
-VARCHAR(50), IN apellidos VARCHAR(50), IN telefono VARCHAR(15), IN direccion 
-VARCHAR(100), IN correo VARCHAR(50), IN tipo_empleado VARCHAR(20), IN estado 
-VARCHAR(20), IN salarioPorHora DECIMAL(10,2))
+
+CREATE OR REPLACE PROCEDURE sp_modificar_empleado(
+    cedula IN VARCHAR2, 
+    nombre IN VARCHAR2, 
+    apellidos IN VARCHAR2, 
+    telefono IN VARCHAR2, 
+    direccion IN VARCHAR2, 
+    correo IN VARCHAR2, 
+    tipo_empleado IN VARCHAR2, 
+    estado IN VARCHAR2, 
+    salarioPorHora IN NUMBER)
+IS
 BEGIN
     UPDATE empleados
-    SET nombre = nombre, apellidos = apellidos, telefono = telefono, 
-    direccion = direccion, correo = correo, tipoEmpleado = tipo_empleado, 
-    estado = estado, salarioPorHora = salarioPorHora
+    SET nombre = nombre, 
+        apellidos = apellidos, 
+        telefono = telefono, 
+        direccion = direccion, 
+        correo = correo, 
+        tipoEmpleado = tipo_empleado, 
+        estado = estado, 
+        salarioPorHora = salarioPorHora
     WHERE cedula = cedula;
-END //
+END;
 
-CREATE PROCEDURE sp_eliminar_empleado(IN cedula VARCHAR(20))
+
+CREATE OR REPLACE PROCEDURE sp_eliminar_empleado(
+    cedula IN VARCHAR2)
+IS
 BEGIN
     DELETE FROM empleados WHERE cedula = cedula;
-END //
+END;
 
-CREATE PROCEDURE sp_consultar_empleados()
+
+CREATE OR REPLACE PROCEDURE sp_consultar_empleados
+IS
 BEGIN
-    SELECT * FROM empleados;
-END //
+    FOR rec IN (SELECT * FROM empleados) LOOP
+        
+        DBMS_OUTPUT.PUT_LINE('Cédula: ' || rec.cedula || ', Nombre: ' || rec.nombre);
+    END LOOP;
+END;
 
-DELIMITER ;
 
 ------------------
 CRUD para la tabla Pacientes
 ------------------
-DELIMITER //
 
-CREATE PROCEDURE sp_agregar_paciente(IN cedula VARCHAR(20), 
-IN nombre VARCHAR(50), IN apellidos VARCHAR(50), IN telefono VARCHAR(15), 
-IN direccion VARCHAR(100), IN correo VARCHAR(50), IN estado VARCHAR(20))
+CREATE OR REPLACE PROCEDURE sp_agregar_paciente(
+    cedula IN VARCHAR2, 
+    nombre IN VARCHAR2, 
+    apellidos IN VARCHAR2, 
+    telefono IN VARCHAR2, 
+    direccion IN VARCHAR2, 
+    correo IN VARCHAR2, 
+    estado IN VARCHAR2)
+IS
 BEGIN
     INSERT INTO pacientes (cedula, nombre, apellidos, telefono, direccion, 
     correo, estado)
     VALUES (cedula, nombre, apellidos, telefono, direccion, correo, estado);
-END //
+END;
 
-CREATE PROCEDURE sp_modificar_paciente(IN cedula VARCHAR(20), 
-IN nombre VARCHAR(50), IN apellidos VARCHAR(50), IN telefono VARCHAR(15), 
-IN direccion VARCHAR(100), IN correo VARCHAR(50), IN estado VARCHAR(20))
+
+CREATE OR REPLACE PROCEDURE sp_modificar_paciente(
+    cedula IN VARCHAR2, 
+    nombre IN VARCHAR2, 
+    apellidos IN VARCHAR2, 
+    telefono IN VARCHAR2, 
+    direccion IN VARCHAR2, 
+    correo IN VARCHAR2, 
+    estado IN VARCHAR2)
+IS
 BEGIN
     UPDATE pacientes
-    SET nombre = nombre, apellidos = apellidos, telefono = telefono, 
-    direccion = direccion, correo = correo, estado = estado
+    SET nombre = nombre, 
+        apellidos = apellidos, 
+        telefono = telefono, 
+        direccion = direccion, 
+        correo = correo, 
+        estado = estado
     WHERE cedula = cedula;
-END //
+END;
 
-CREATE PROCEDURE sp_eliminar_paciente(IN cedula VARCHAR(20))
+
+CREATE OR REPLACE PROCEDURE sp_eliminar_paciente(
+    cedula IN VARCHAR2)
+IS
 BEGIN
     DELETE FROM pacientes WHERE cedula = cedula;
-END //
+END;
 
-CREATE PROCEDURE sp_consultar_pacientes()
+
+CREATE OR REPLACE PROCEDURE sp_consultar_pacientes
+IS
 BEGIN
-    SELECT * FROM pacientes;
-END //
+    FOR rec IN (SELECT * FROM pacientes) LOOP
+        
+        DBMS_OUTPUT.PUT_LINE('Cédula: ' || rec.cedula || ', Nombre: ' || rec.nombre);
+    END LOOP;
+END;
 
-DELIMITER ;
 
 ------------------
 Vistas de empleados y pacientes
 ------------------
-CREATE VIEW vista_empleados_activos AS
+CREATE OR REPLACE VIEW vista_empleados_activos AS
 SELECT * FROM empleados WHERE estado = 'ACTIVO';
 
-CREATE VIEW vista_pacientes_con_deuda AS
+CREATE OR REPLACE VIEW vista_pacientes_con_deuda AS
 SELECT * FROM pacientes WHERE deuda > 0;
 
 ------------------
-Funcion para calcular la deuda total de un paciente
+Función para calcular la deuda total de un paciente
 ------------------
-CREATE FUNCTION fn_calcular_deuda(cedula VARCHAR(20)) RETURNS DECIMAL(10,2)
+CREATE OR REPLACE FUNCTION fn_calcular_deuda(cedula IN VARCHAR2) 
+RETURN NUMBER
+IS
+    total_deuda NUMBER(10,2);
 BEGIN
-    DECLARE total_deuda DECIMAL(10,2);
-    SELECT SUM(monto) INTO total_deuda FROM facturas WHERE cedulaPaciente = 
-    cedula AND estado = 'PENDIENTE';
-    RETURN total_deuda;
+    SELECT SUM(monto) INTO total_deuda 
+    FROM facturas 
+    WHERE cedulaPaciente = cedula AND estado = 'PENDIENTE';
+    
+    RETURN NVL(total_deuda, 0);
 END;
 
+
 ------------------
-Trigger para actualizar el estado del paciente
-------------------
-CREATE TRIGGER trigger_actualizar_estado_empleado
-BEFORE DELETE ON empleados
-FOR EACH ROW
-BEGIN
-    SET OLD.estado = 'INACTIVO';
-END;
 
 
