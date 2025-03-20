@@ -1,53 +1,53 @@
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\ChatClienteServidor\Cliente.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\ChatClienteServidor\ServerHandler.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\ChatClienteServidor\Servidor.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Factura.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Fallas\Reporte.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Fallas\ReportFallas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Comida.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\DispositivosMedicos.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\HerramientasMedicas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Medicamentos.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Objeto.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\ObjetosOficina.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Pegasus.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Alquiler.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Estado.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionFecha.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionReservas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionSalas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\PantallaDeSalasOpcion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Sala.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Salas\TipoSala.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\com\mycompany\pegasus\Tratamiento.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Conex_base_datos\Conexion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionCitas\Asunto.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionCitas\Cita.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionCitas\Gestion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionCitas\GestionCitas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\Detalle.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\EstadoFactura.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\Factura.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\GestionAsignarMedicamentos.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\GestionCobros.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\GestionModificarMedicamentos.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\InterfazCobrosFacturas.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\InterfazDecisionInventario.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\InterfazFacturacion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\InterfazPrincipalFacturacion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\Medicamento.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionFacturacion\MedsReservadosPacientes.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\Empleado.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\EstadoEmpleado.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\EstadoPaciente.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\GestionPacientes.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\ModificaEmpleado.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\ModificarPacienteCompleto.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\Paciente.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\Persona.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\GestionPersonas\Tipo_empleado.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Inicio\GestionAutentificacion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Inicio\InicioSesion.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Inicio\MenuPrincipalEmpleados.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Inicio\Registro.java
-C:\Users\mikeu\OneDrive\Escritorio\Lenguajes de Base de Datos\Sistema_gestion_hospitalaria\Pegasus\src\main\java\Inicio\Usuario.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\ChatClienteServidor\Cliente.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\ChatClienteServidor\ServerHandler.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\ChatClienteServidor\Servidor.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Factura.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Fallas\Reporte.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Fallas\ReportFallas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Comida.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\DispositivosMedicos.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\HerramientasMedicas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Medicamentos.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\Objeto.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Objeto\ObjetosOficina.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Pegasus.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Alquiler.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Estado.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionFecha.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionReservas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\GestionSalas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\PantallaDeSalasOpcion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\Sala.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Salas\TipoSala.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\com\mycompany\pegasus\Tratamiento.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Conex_base_datos\Conexion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionCitas\Asunto.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionCitas\Cita.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionCitas\Gestion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionCitas\GestionCitas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\Detalle.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\EstadoFactura.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\Factura.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\GestionAsignarMedicamentos.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\GestionCobros.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\GestionModificarMedicamentos.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\InterfazCobrosFacturas.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\InterfazDecisionInventario.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\InterfazFacturacion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\InterfazPrincipalFacturacion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\Medicamento.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionFacturacion\MedsReservadosPacientes.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\Empleado.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\EstadoEmpleado.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\EstadoPaciente.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\GestionPacientes.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\ModificaEmpleado.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\ModificarPacienteCompleto.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\Paciente.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\Persona.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\GestionPersonas\Tipo_empleado.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Inicio\GestionAutentificacion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Inicio\InicioSesion.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Inicio\MenuPrincipalEmpleados.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Inicio\Registro.java
+C:\Users\mikeu\OneDrive\Documentos\NetBeansProjects\Proyecto2\ProyectoLBDG6\Pegasus\src\main\java\Inicio\Usuario.java

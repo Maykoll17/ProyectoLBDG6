@@ -162,8 +162,8 @@ public class Empleado extends Persona {
         Conexion conexion = new Conexion();
 
         String sql = "UPDATE empleados SET nombre = ?, apellidos = ?, "
-                + "telefono = ?, direccion = ?, correo = ?, tipoEmpleado = ?, "
-                + "estado = ?, salarioPorHora = ? WHERE cedula = ?";
+                + "telefono = ?, direccion = ?, correo = ?, tipoEmpleado = ?,"
+                + " estado = ?, salarioPorHora = ? WHERE cedula = ?";
 
         try {
             CallableStatement cs = conexion.conectar().prepareCall(sql);

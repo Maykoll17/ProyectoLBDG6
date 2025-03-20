@@ -347,12 +347,12 @@ public class ModificaEmpleado extends javax.swing.JFrame {
                 String direccion = txaDireccion.getText();
                 String correo = txtCorreo.getText();
 
-                Empleado empleado = new Empleado(tipo_empleado, salarioPorHora,
-                        estado,cedula, nombre, apellidos,
+                Empleado empleado = new Empleado
+        (tipo_empleado, salarioPorHora, estado,cedula, nombre, apellidos,
                         telefono, direccion, correo);
 
-                if (!empleado.getCedula().equals("") && !empleado.getTelefono()
-                        .equals("")) {
+                if (!empleado.getCedula().equals("") && 
+                        !empleado.getTelefono().equals("")) {
                     empleado.modificar();
                     limpiar();
                 }
@@ -380,8 +380,8 @@ public class ModificaEmpleado extends javax.swing.JFrame {
         txtTelefono.setText(tblEmpleados.getValueAt(fila, 3).toString());
         txaDireccion.setText(tblEmpleados.getValueAt(fila, 4).toString());
         txtCorreo.setText(tblEmpleados.getValueAt(fila, 5).toString());
-        cbTipoempleado.setSelectedItem(tblEmpleados.getValueAt
-        (fila, 6).toString());
+        cbTipoempleado.setSelectedItem(tblEmpleados.getValueAt(fila, 6).
+                toString());
         cbEstado.setSelectedItem(tblEmpleados.getValueAt(fila, 7).toString());
         txtSalario.setText(tblEmpleados.getValueAt(fila, 8).toString());
 

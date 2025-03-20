@@ -22,7 +22,7 @@ public class Paciente extends Persona {
     }
 
     public Paciente(EstadoPaciente estado, double deuda, String cedula, 
-            String nombre, String apellidos, String telefono, String direccion,
+            String nombre, String apellidos, String telefono, String direccion, 
             String correo) {
         super(cedula, nombre, apellidos,telefono, direccion, correo);
         this.estado = estado;
@@ -33,7 +33,7 @@ public class Paciente extends Persona {
         Conexion conexion = new Conexion();
         DefaultTableModel model = new DefaultTableModel();
 
-        // Añadir las columnas al modelo de tabla
+        
         model.addColumn("Cédula");
         model.addColumn("Nombre");
         model.addColumn("Apellidos");
@@ -91,8 +91,8 @@ public class Paciente extends Persona {
                 paciente.setTelefono(rs.getString("telefono"));
                 paciente.setDireccion(rs.getString("direccion"));
                 paciente.setCorreo(rs.getString("correo"));
-                paciente.setEstado(EstadoPaciente.valueOf
-        (rs.getString("estado")));
+                paciente.setEstado(EstadoPaciente.valueOf(rs.getString
+        ("estado")));
                 paciente.setDeuda(rs.getDouble("deuda"));
                 listaPacientes.add(paciente);
             }
@@ -115,9 +115,9 @@ public class Paciente extends Persona {
 
         Conexion conexion = new Conexion();
 
-        String sql = "INSERT INTO pacientes (cedula, nombre, apellidos,"
-                + " telefono, direccion, correo, estado, deuda) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pacientes (cedula, nombre, apellidos, "
+                + "telefono, direccion, correo, estado, deuda) VALUES "
+                + "(?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             CallableStatement cs = conexion.conectar().prepareCall(sql);
