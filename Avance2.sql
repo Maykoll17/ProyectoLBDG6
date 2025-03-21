@@ -11,7 +11,14 @@ WHERE p.deuda > 0;
 
 -- Vista de historial de citas
 CREATE OR REPLACE VIEW vista_historial_citas AS
-SELECT c.id, p.nombre AS paciente, e.nombre AS empleado, c.fecha, c.motivo
+SELECT 
+    c.id, 
+    c.cedula_paciente, 
+    c.cedula_empleado, 
+    c.fecha, 
+    c.motivo,
+    p.nombre AS nombre_paciente, 
+    e.nombre AS nombre_empleado
 FROM citas c
 JOIN pacientes p ON c.cedula_paciente = p.cedula
 JOIN empleados e ON c.cedula_empleado = e.cedula;
@@ -36,7 +43,7 @@ JOIN pacientes p ON f.cedula_paciente = p.cedula;
 --empleados activos (vista_empleados_activos)
 DECLARE 
     CURSOR cur_empleados_activos IS 
-        SELECT * FROM vista_empleados_activos;
+        SELECT cedula, nombre, apellidos, estado FROM vista_empleados_activos;
     
     v_cedula empleados.cedula%TYPE;
     v_nombre empleados.nombre%TYPE;
@@ -56,6 +63,7 @@ BEGIN
     CLOSE cur_empleados_activos;
 END;
 /
+
 
 --pacientes con deuda (vista_pacientes_con_deuda)
 DECLARE
@@ -93,12 +101,16 @@ DECLARE
     v_empleado citas.cedula_empleado%TYPE;
     v_fecha citas.fecha%TYPE;
     v_motivo citas.motivo%TYPE;
+    v_nombre_paciente pacientes.nombre%TYPE;
+    v_nombre_empleado empleados.nombre%TYPE;
+
 
 BEGIN
     OPEN cur_historial_citas;
 
     LOOP
-        FETCH cur_historial_citas INTO v_id, v_paciente, v_empleado, v_fecha, v_motivo;
+        FETCH cur_historial_citas INTO v_id, v_paciente, v_empleado, v_fecha, v_motivo, v_nombre_paciente, v_nombre_empleado;
+
         EXIT WHEN cur_historial_citas%NOTFOUND;
 
         DBMS_OUTPUT.PUT_LINE('Cita ID: ' || v_id || ' | Paciente: ' || v_paciente || ' | Empleado: ' || v_empleado || ' | Fecha: ' || v_fecha || ' | Motivo: ' || v_motivo);
@@ -107,6 +119,7 @@ BEGIN
     CLOSE cur_historial_citas;
 END;
 /
+
 
 -- salas disponibles (vista_disponibilidad_salas)
 
@@ -524,27 +537,6 @@ CREATE OR REPLACE PACKAGE paquete_salas AS
 END paquete_salas;
 /
 
-CREATE OR REPLACE PACKAGE paquete_salas AS
-    PROCEDURE registrar_sala(
-        p_capacidad IN NUMBER,
-        p_tipo_sala_id IN NUMBER,
-        p_estado_sala_id IN NUMBER,
-        p_precio_por_hora IN NUMBER
-    );
-
-    PROCEDURE actualizar_sala(
-        p_id IN NUMBER,
-        p_capacidad IN NUMBER,
-        p_tipo_sala_id IN NUMBER,
-        p_estado_sala_id IN NUMBER,
-        p_precio_por_hora IN NUMBER
-    );
-
-    PROCEDURE eliminar_sala(
-        p_id IN NUMBER
-    );
-END paquete_salas;
-/
 
 
 
