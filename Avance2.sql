@@ -295,5 +295,256 @@ BEGIN
 END;
 /
 
+---Paquete empleados---
+
+CREATE OR REPLACE PACKAGE paquete_empleados AS
+    PROCEDURE registrar_empleado(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_tipo_empleado_id IN NUMBER,
+        p_estado IN VARCHAR2,
+        p_salario_por_hora IN NUMBER
+    );
+
+    PROCEDURE actualizar_empleado(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_salario_por_hora IN NUMBER
+    );
+
+    PROCEDURE eliminar_empleado(
+        p_cedula IN VARCHAR2
+    );
+END paquete_empleados;
+/
+
+CREATE OR REPLACE PACKAGE BODY paquete_empleados AS
+
+    PROCEDURE registrar_empleado(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_tipo_empleado_id IN NUMBER,
+        p_estado IN VARCHAR2 DEFAULT 'ACTIVO',
+        p_salario_por_hora IN NUMBER
+    ) AS
+    BEGIN
+        INSERT INTO empleados (cedula, nombre, apellidos, telefono, direccion, correo, tipo_empleado_id, estado, salario_por_hora)
+        VALUES (p_cedula, p_nombre, p_apellidos, p_telefono, p_direccion, p_correo, p_tipo_empleado_id, p_estado, p_salario_por_hora);
+    END registrar_empleado;
+
+    PROCEDURE actualizar_empleado(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_salario_por_hora IN NUMBER
+    ) AS
+    BEGIN
+        UPDATE empleados
+        SET nombre = p_nombre, apellidos = p_apellidos, telefono = p_telefono, direccion = p_direccion, correo = p_correo, salario_por_hora = p_salario_por_hora
+        WHERE cedula = p_cedula;
+    END actualizar_empleado;
+
+    PROCEDURE eliminar_empleado(p_cedula IN VARCHAR2) AS
+    BEGIN
+        DELETE FROM empleados
+        WHERE cedula = p_cedula;
+    END eliminar_empleado;
+
+END paquete_empleados;
+/
+
+
+---Paquete de Pacientes
+CREATE OR REPLACE PACKAGE paquete_pacientes AS
+    PROCEDURE registrar_paciente(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_estado_paciente_id IN NUMBER,
+        p_deuda IN NUMBER
+    );
+
+    PROCEDURE actualizar_paciente(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_estado_paciente_id IN NUMBER,
+        p_deuda IN NUMBER
+    );
+
+    PROCEDURE eliminar_paciente(
+        p_cedula IN VARCHAR2
+    );
+END paquete_pacientes;
+/
+
+CREATE OR REPLACE PACKAGE BODY paquete_pacientes AS
+
+    PROCEDURE registrar_paciente(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_estado_paciente_id IN NUMBER,
+        p_deuda IN NUMBER
+    ) AS
+    BEGIN
+        INSERT INTO pacientes (cedula, nombre, apellidos, telefono, direccion, correo, estado_paciente_id, deuda)
+        VALUES (p_cedula, p_nombre, p_apellidos, p_telefono, p_direccion, p_correo, p_estado_paciente_id, p_deuda);
+    END registrar_paciente;
+
+    PROCEDURE actualizar_paciente(
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo IN VARCHAR2,
+        p_estado_paciente_id IN NUMBER,
+        p_deuda IN NUMBER
+    ) AS
+    BEGIN
+        UPDATE pacientes
+        SET nombre = p_nombre, apellidos = p_apellidos, telefono = p_telefono, direccion = p_direccion, correo = p_correo, estado_paciente_id = p_estado_paciente_id, deuda = p_deuda
+        WHERE cedula = p_cedula;
+    END actualizar_paciente;
+
+    PROCEDURE eliminar_paciente(p_cedula IN VARCHAR2) AS
+    BEGIN
+        DELETE FROM pacientes
+        WHERE cedula = p_cedula;
+    END eliminar_paciente;
+
+END paquete_pacientes;
+/
+
+--- Paquete Medicamentos
+
+CREATE OR REPLACE PACKAGE paquete_medicamentos AS
+    PROCEDURE registrar_medicamento(
+        p_nombre IN VARCHAR2,
+        p_precio IN NUMBER,
+        p_cantidad IN NUMBER,
+        p_informacion IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_medicamento(
+        p_id IN NUMBER,
+        p_nombre IN VARCHAR2,
+        p_precio IN NUMBER,
+        p_cantidad IN NUMBER,
+        p_informacion IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_medicamento(
+        p_id IN NUMBER
+    );
+END paquete_medicamentos;
+/
+
+CREATE OR REPLACE PACKAGE BODY paquete_medicamentos AS
+
+    PROCEDURE registrar_medicamento(
+        p_nombre IN VARCHAR2,
+        p_precio IN NUMBER,
+        p_cantidad IN NUMBER,
+        p_informacion IN VARCHAR2
+    ) AS
+    BEGIN
+        INSERT INTO medicamentos (nombre, precio, cantidad, informacion)
+        VALUES (p_nombre, p_precio, p_cantidad, p_informacion);
+    END registrar_medicamento;
+
+    PROCEDURE actualizar_medicamento(
+        p_id IN NUMBER,
+        p_nombre IN VARCHAR2,
+        p_precio IN NUMBER,
+        p_cantidad IN NUMBER,
+        p_informacion IN VARCHAR2
+    ) AS
+    BEGIN
+        UPDATE medicamentos
+        SET nombre = p_nombre, precio = p_precio, cantidad = p_cantidad, informacion = p_informacion
+        WHERE id = p_id;
+    END actualizar_medicamento;
+
+    PROCEDURE eliminar_medicamento(p_id IN NUMBER) AS
+    BEGIN
+        DELETE FROM medicamentos
+        WHERE id = p_id;
+    END eliminar_medicamento;
+
+END paquete_medicamentos;
+/
+
+---Paquete de Salas
+
+CREATE OR REPLACE PACKAGE paquete_salas AS
+    PROCEDURE registrar_sala(
+        p_capacidad IN NUMBER,
+        p_tipo_sala_id IN NUMBER,
+        p_estado_sala_id IN NUMBER,
+        p_precio_por_hora IN NUMBER
+    );
+
+    PROCEDURE actualizar_sala(
+        p_id IN NUMBER,
+        p_capacidad IN NUMBER,
+        p_tipo_sala_id IN NUMBER,
+        p_estado_sala_id IN NUMBER,
+        p_precio_por_hora IN NUMBER
+    );
+
+    PROCEDURE eliminar_sala(
+        p_id IN NUMBER
+    );
+END paquete_salas;
+/
+
+CREATE OR REPLACE PACKAGE paquete_salas AS
+    PROCEDURE registrar_sala(
+        p_capacidad IN NUMBER,
+        p_tipo_sala_id IN NUMBER,
+        p_estado_sala_id IN NUMBER,
+        p_precio_por_hora IN NUMBER
+    );
+
+    PROCEDURE actualizar_sala(
+        p_id IN NUMBER,
+        p_capacidad IN NUMBER,
+        p_tipo_sala_id IN NUMBER,
+        p_estado_sala_id IN NUMBER,
+        p_precio_por_hora IN NUMBER
+    );
+
+    PROCEDURE eliminar_sala(
+        p_id IN NUMBER
+    );
+END paquete_salas;
+/
+
 
 
