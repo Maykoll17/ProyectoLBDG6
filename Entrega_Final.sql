@@ -1151,10 +1151,242 @@ END FIDE_PACIENTES_HOSPITALIZADOS_PKG;
 -- ==============================================
 -- ==============================================
 -- ==============================================
--- NUEVOS PAQUETES
+-- NUEVAS FUNCIONES
 --===============================================
 -- ==============================================
 -- ==============================================
+--Funcion para Calcular el Total de Factura con Descuento
+CREATE OR REPLACE FUNCTION FIDE_FN_CALCULAR_TOTAL_FACTURA(
+    p_factura_id IN NUMBER
+) RETURN NUMBER IS
+    v_total_factura NUMBER;
+    v_porcentaje_descuento NUMBER;
+    v_total_con_descuento NUMBER;
+BEGIN
+    SELECT FIDE_TOTAL_FACTURA, FIDE_PORCENTAJE_APLICADO 
+    INTO v_total_factura, v_porcentaje_descuento
+    FROM FIDE_FACTURAS_TB 
+    WHERE FIDE_FACTURA_ID = p_factura_id;
+
+    v_total_con_descuento := v_total_factura - (v_total_factura * 
+    (v_porcentaje_descuento / 100));
+    
+    RETURN v_total_con_descuento;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+END;
+/
+
+
+--Funcion para obtener el Nombre Completo del Paciente
+CREATE OR REPLACE FUNCTION FIDE_FN_OBTENER_NOMBRE_PACIENTE(
+    p_cedula IN VARCHAR2
+) RETURN VARCHAR2 IS
+    v_nombre_completo VARCHAR2(300);
+BEGIN
+    SELECT FIDE_NOMBRE_PACIENTE || ' ' || FIDE_APELLIDOS_PACIENTE
+    INTO v_nombre_completo
+    FROM FIDE_PACIENTES_TB
+    WHERE FIDE_PACIENTE_CEDULA = p_cedula;
+
+    RETURN v_nombre_completo;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'Paciente no encontrado';
+END;
+/
+
+
+--Funcion para Contar el Número de Intentos Fallidos de Acceso
+CREATE OR REPLACE FUNCTION FIDE_FN_CONTAR_INTENTOS_FALLIDOS(
+    p_usuario_id IN NUMBER
+) RETURN NUMBER IS
+    v_intentos NUMBER;
+BEGIN
+    SELECT FIDE_INTENTOS_FALLIDOS 
+    INTO v_intentos
+    FROM FIDE_USUARIOS_TB
+    WHERE FIDE_USUARIO_ID = p_usuario_id;
+
+    RETURN v_intentos;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+END;
+/
+
+
+--Funcion para Validar un Descuento
+CREATE OR REPLACE FUNCTION FIDE_FN_VALIDAR_DESCUENTO(
+    p_codigo_descuento IN VARCHAR2
+) RETURN BOOLEAN IS
+    v_estado VARCHAR2(20);
+BEGIN
+    SELECT FIDE_ESTADO 
+    INTO v_estado
+    FROM FIDE_DESCUENTOS_TB
+    WHERE FIDE_CODIGO_DESCUENTO = p_codigo_descuento
+      AND FIDE_FECHA_INICIO <= SYSTIMESTAMP 
+      AND FIDE_FECHA_FIN >= SYSTIMESTAMP;
+
+    RETURN v_estado = 'ACTIVO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN FALSE;
+END;
+/
+
+
+--Funcion para Calcular la Duracion de una Hospitalizacion
+CREATE OR REPLACE FUNCTION FIDE_FN_CALCULAR_DURACION_HOSPITALIZACION(
+    p_hospitalizacion_id IN NUMBER
+) RETURN NUMBER IS
+    v_fecha_ingreso TIMESTAMP;
+    v_duracion NUMBER;
+BEGIN
+    SELECT FIDE_FECHA_INGRESO
+    INTO v_fecha_ingreso
+    FROM FIDE_HOSPITALIZACIONES_TB
+    WHERE FIDE_HOSPITALIZACION_ID = p_hospitalizacion_id;
+
+    v_duracion := TRUNC(SYSTIMESTAMP - v_fecha_ingreso);
+
+    RETURN v_duracion;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+END;
+/
+
+
+--Funcion para calcular el Salario Total de un Empleado
+CREATE OR REPLACE FUNCTION FIDE_FN_CALCULAR_SALARIO_TOTAL(
+    p_empleado_id IN NUMBER
+) RETURN NUMBER IS
+    v_salario_por_hora NUMBER;
+    v_horas_trabajadas NUMBER;
+    v_salario_total NUMBER;
+BEGIN
+    SELECT FIDE_SALARIO_HORA, SUM(FIDE_HORAS_TRABAJADAS)
+    INTO v_salario_por_hora, v_horas_trabajadas
+    FROM FIDE_HORAS_TRABAJO_TB
+    WHERE FIDE_EMPLEADO_ID = p_empleado_id
+    GROUP BY FIDE_SALARIO_HORA;
+
+    v_salario_total := v_salario_por_hora * v_horas_trabajadas;
+
+    RETURN v_salario_total;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 0;
+END;
+/
+
+
+--Funcion para obtener el Estado de una Cita
+CREATE OR REPLACE FUNCTION FIDE_FN_OBTENER_ESTADO_CITA(
+    p_cita_id IN NUMBER
+) RETURN VARCHAR2 IS
+    v_estado VARCHAR2(20);
+BEGIN
+    SELECT FIDE_ESTADO_CITA
+    INTO v_estado
+    FROM FIDE_CITAS_TB
+    WHERE FIDE_CITA_ID = p_cita_id;
+
+    RETURN v_estado;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'Cita no encontrada';
+END;
+/
+
+
+--Funcion para contar el número de Pacientes con Deuda
+CREATE OR REPLACE FUNCTION FIDE_FN_CONTAR_PACIENTES_CON_DEUDA RETURN NUMBER IS
+    v_contador NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_contador
+    FROM FIDE_PACIENTES_TB
+    WHERE FIDE_DEUDA_PACIENTE > 0;
+
+    RETURN v_contador;
+END;
+/
+
+
+--Funcion para obtener el Tipo de Sala de un Alquiler
+CREATE OR REPLACE FUNCTION FIDE_FN_OBTENER_TIPO_SALA_ALQUILER(
+    p_alquiler_id IN NUMBER
+) RETURN VARCHAR2 IS
+    v_tipo_sala VARCHAR2(50);
+BEGIN
+    SELECT ts.FIDE_DESCRIPCION_TIPO_SALA
+    INTO v_tipo_sala
+    FROM FIDE_ALQUILERES_TB a
+    JOIN FIDE_SALAS_TB s ON a.FIDE_SALA_ID = s.FIDE_SALA_ID
+    JOIN FIDE_TIPOS_SALAS_TB ts ON s.FIDE_TIPO_SALA_ID = ts.FIDE_TIPO_SALA_ID
+    WHERE a.FIDE_ALQUILER_ID = p_alquiler_id;
+
+    RETURN v_tipo_sala;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'Alquiler no encontrado';
+END;
+/
+
+
+--Funcion para calcular el numero de Medicamentos Disponibles
+CREATE OR REPLACE FUNCTION FIDE_FN_CONTAR_MEDICAMENTOS_DISPONIBLES 
+RETURN NUMBER IS
+    v_contador NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_contador
+    FROM FIDE_MEDICAMENTOS_TB
+    WHERE FIDE_CANTIDAD_MEDICAMENTO > 0;
+
+    RETURN v_contador;
+END;
+/
+
+
+--Funcion para calcular el Total de Alquileres en un rango de Fechas
+CREATE OR REPLACE FUNCTION FIDE_FN_TOTAL_ALQUILERES(
+    p_fecha_inicio IN TIMESTAMP,
+    p_fecha_fin IN TIMESTAMP
+) RETURN NUMBER IS
+    v_total NUMBER;
+BEGIN
+    SELECT SUM(FIDE_TOTAL_ALQUILER)
+    INTO v_total
+    FROM FIDE_ALQUILERES_TB
+    WHERE FIDE_FECHA_INICIO_ALQUILER BETWEEN p_fecha_inicio AND p_fecha_fin;
+
+    RETURN NVL(v_total, 0);
+END;
+/
+
+
+--Funcion para Validar un Usuario
+CREATE OR REPLACE FUNCTION FIDE_FN_VALIDAR_USUARIO(
+    p_usuario_id IN NUMBER
+) RETURN BOOLEAN IS
+    v_estado_usuario VARCHAR2(20);
+BEGIN
+    SELECT FIDE_ESTADO_USUARIO
+    INTO v_estado_usuario
+    FROM FIDE_USUARIOS_TB
+    WHERE FIDE_USUARIO_ID = p_usuario_id;
+
+    RETURN v_estado_usuario = 'ACTIVO';
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN FALSE;  
+END;
+/
 
 
 
