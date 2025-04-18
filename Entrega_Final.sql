@@ -1387,6 +1387,229 @@ EXCEPTION
         RETURN FALSE;  
 END;
 /
+-- ==============================================
+-- ==============================================
+-- ==============================================
+-- NUEVOS CURSORES
+--===============================================
+-- ==============================================
+-- ==============================================
+
+--Cursor para listar todos los Empleados Activos
+CREATE OR REPLACE CURSOR FIDE_CUR_EMPLEADOS_ACTIVOS IS
+SELECT 
+    e.FIDE_EMPLEADO_CEDULA,
+    e.FIDE_NOMBRE_EMPLEADO,
+    e.FIDE_APELLIDOS_EMPLEADO,
+    e.FIDE_TELEFONO_EMPLEADO,
+    e.FIDE_DIRECCION_EMPLEADO
+FROM 
+    FIDE_EMPLEADOS_TB e
+WHERE 
+    e.FIDE_ESTADO_EMPLEADO = 'ACTIVO';
+
+
+--Cursor para listar todos los Pacientes con Deuda
+CREATE OR REPLACE CURSOR FIDE_CUR_PACIENTES_CON_DEUDA IS
+SELECT 
+    p.FIDE_PACIENTE_CEDULA,
+    p.FIDE_NOMBRE_PACIENTE,
+    p.FIDE_APELLIDOS_PACIENTE,
+    p.FIDE_DEUDA_PACIENTE
+FROM 
+    FIDE_PACIENTES_TB p
+WHERE 
+    p.FIDE_DEUDA_PACIENTE > 0;
+    
+
+--Cursor para listar todas las Citas Programadas
+CREATE OR REPLACE CURSOR FIDE_CUR_CITAS_PROGRAMADAS IS
+SELECT 
+    c.FIDE_CITA_ID,
+    c.FIDE_FECHA_CITA,
+    p.FIDE_NOMBRE_PACIENTE,
+    e.FIDE_NOMBRE_EMPLEADO
+FROM 
+    FIDE_CITAS_TB c
+JOIN 
+    FIDE_PACIENTES_TB p ON c.FIDE_PACIENTE_CEDULA = p.FIDE_PACIENTE_CEDULA
+JOIN 
+    FIDE_EMPLEADOS_TB e ON c.FIDE_EMPLEADO_CEDULA = e.FIDE_EMPLEADO_CEDULA;
+    
+    
+--Cursor para obtener Medicamentos Agotados
+CREATE OR REPLACE CURSOR FIDE_CUR_MEDICAMENTOS_AGOTADOS IS
+SELECT 
+    m.FIDE_MEDICAMENTO_ID,
+    m.FIDE_NOMBRE_MEDICAMENTO,
+    m.FIDE_PRECIO_MEDICAMENTO
+FROM 
+    FIDE_MEDICAMENTOS_TB m
+WHERE 
+    m.FIDE_CANTIDAD_MEDICAMENTO = 0;
+    
+    
+--Cursor para listar los Logs de Acceso de un Usuario
+CREATE OR REPLACE CURSOR FIDE_CUR_LOGS_ACCESO(
+    p_usuario_id IN NUMBER
+) IS
+SELECT 
+    la.FIDE_LOG_ID,
+    la.FIDE_FECHA_ACCESO,
+    la.FIDE_IP_ACCESO,
+    la.FIDE_ACCION,
+    la.FIDE_RESULTADO
+FROM 
+    FIDE_LOGS_ACCESO_TB la
+WHERE 
+    la.FIDE_USUARIO_ID = p_usuario_id
+ORDER BY 
+    la.FIDE_FECHA_ACCESO DESC;
+    
+    
+--Cursor para listar todas las Hospitalizaciones Activas
+CREATE OR REPLACE CURSOR FIDE_CUR_HOSPITALIZACIONES_ACTIVAS IS
+SELECT 
+    h.FIDE_HOSPITALIZACION_ID,
+    p.FIDE_NOMBRE_PACIENTE,
+    h.FIDE_FECHA_INGRESO,
+    h.FIDE_MOTIVO_INGRESO
+FROM 
+    FIDE_HOSPITALIZACIONES_TB h
+JOIN 
+    FIDE_PACIENTES_TB p ON h.FIDE_PACIENTE_CEDULA = p.FIDE_PACIENTE_CEDULA
+WHERE 
+    h.FIDE_FECHA_ALTA IS NULL;
+
+
+--Cursor para listar todos los Recibos por Factura
+CREATE OR REPLACE CURSOR FIDE_CUR_RECIBOS_POR_FACTURA(
+    p_factura_id IN NUMBER
+) IS
+SELECT 
+    r.FIDE_RECIBO_ID,
+    r.FIDE_FECHA_PAGO,
+    r.FIDE_MONTO_PAGADO,
+    r.FIDE_METODO_PAGO
+FROM 
+    FIDE_RECIBOS_TB r
+WHERE 
+    r.FIDE_FACTURA_ID = p_factura_id;
+
+
+---Cursor para listar Descuentos Activos
+CREATE OR REPLACE CURSOR FIDE_CUR_DESCUENTOS_ACTIVOS IS
+SELECT 
+    d.FIDE_DESCUENTO_ID,
+    d.FIDE_CODIGO_DESCUENTO,
+    d.FIDE_PORCENTAJE_DESCUENTO,
+    d.FIDE_FECHA_INICIO,
+    d.FIDE_FECHA_FIN
+FROM 
+    FIDE_DESCUENTOS_TB d
+WHERE 
+    d.FIDE_ESTADO = 'ACTIVO'
+    AND d.FIDE_FECHA_INICIO <= SYSTIMESTAMP
+    AND d.FIDE_FECHA_FIN >= SYSTIMESTAMP;
+    
+    
+--Cursor para listar todos los Medicamentos Disponibles
+CREATE OR REPLACE CURSOR FIDE_CUR_MEDICAMENTOS_DISPONIBLES IS
+SELECT 
+    m.FIDE_MEDICAMENTO_ID,
+    m.FIDE_NOMBRE_MEDICAMENTO,
+    m.FIDE_PRECIO_MEDICAMENTO,
+    m.FIDE_CANTIDAD_MEDICAMENTO
+FROM 
+    FIDE_MEDICAMENTOS_TB m
+WHERE 
+    m.FIDE_CANTIDAD_MEDICAMENTO > 0;
+    
+    
+--Cursor para listar todos los Alquileres Activos
+CREATE OR REPLACE CURSOR FIDE_CUR_ALQUILERES_ACTIVOS IS
+SELECT 
+    a.FIDE_ALQUILER_ID,
+    a.FIDE_DOCTOR_ALQUILER,
+    a.FIDE_FECHA_INICIO_ALQUILER,
+    a.FIDE_TOTAL_ALQUILER,
+    s.FIDE_CAPACIDAD_SALA
+FROM 
+    FIDE_ALQUILERES_TB a
+JOIN 
+    FIDE_SALAS_TB s ON a.FIDE_SALA_ID = s.FIDE_SALA_ID
+WHERE 
+    a.FIDE_FECHA_FIN_ALQUILER IS NULL;  
+    
+    
+--Cursor para listar todas las Notificaciones Pendientes
+CREATE OR REPLACE CURSOR FIDE_CUR_NOTIFICACIONES_PENDIENTES IS
+SELECT 
+    n.FIDE_NOTIFICACION_ID,
+    n.FIDE_TIPO_NOTIFICACION,
+    n.FIDE_DESTINATARIO,
+    n.FIDE_ASUNTO,
+    n.FIDE_CUERPO
+FROM 
+    FIDE_NOTIFICACIONES_TB n
+WHERE 
+    n.FIDE_ESTADO = 'PENDIENTE';
+    
+    
+--Cursor para listar todos los Roles
+CREATE OR REPLACE CURSOR FIDE_CUR_ROLES IS
+SELECT 
+    r.FIDE_ROL_ID,
+    r.FIDE_NOMBRE_ROL
+FROM 
+    FIDE_ROLES_TB r;
+    
+    
+--Cursor para listar todos los Historiales Médicos de un Paciente
+CREATE OR REPLACE CURSOR FIDE_CUR_HISTORIAL_MEDICO(
+    p_cedula_paciente IN VARCHAR2
+) IS
+SELECT 
+    hm.FIDE_HISTORIAL_ID,
+    hm.FIDE_FECHA_REGISTRO,
+    hm.FIDE_DIAGNOSTICO,
+    hm.FIDE_TRATAMIENTO,
+    hm.FIDE_OBSERVACIONES
+FROM 
+    FIDE_HISTORIAL_MEDICO_TB hm
+WHERE 
+    hm.FIDE_PACIENTE_CEDULA = p_cedula_paciente;
+    
+    
+--Cursor para listar todas las Hospitalizaciones de un Paciente
+CREATE OR REPLACE CURSOR FIDE_CUR_HOSPITALIZACIONES_PACIENTE(
+    p_cedula_paciente IN VARCHAR2
+) IS
+SELECT 
+    h.FIDE_HOSPITALIZACION_ID,
+    h.FIDE_FECHA_INGRESO,
+    h.FIDE_FECHA_ALTA,
+    h.FIDE_MOTIVO_INGRESO,
+    h.FIDE_DIAGNOSTICO_INGRESO
+FROM 
+    FIDE_HOSPITALIZACIONES_TB h
+WHERE 
+    h.FIDE_PACIENTE_CEDULA = p_cedula_paciente;
+    
+    
+--Cursor para listar todos los Detalles de Factura de un Paciente
+CREATE OR REPLACE CURSOR FIDE_CUR_DETALLES_FACTURA(
+    p_factura_id IN NUMBER
+) IS
+SELECT 
+    df.FIDE_DETALLE_FACTURA_ID,
+    df.FIDE_DESCRIPCION_FACTURA,
+    df.FIDE_MONTO_FACTURA
+FROM 
+    FIDE_DETALLES_FACTURAS_TB df
+WHERE 
+    df.FIDE_FACTURA_ID = p_factura_id;
+
 
 
 
