@@ -1610,6 +1610,72 @@ FROM
 WHERE 
     df.FIDE_FACTURA_ID = p_factura_id;
 
+-- ==============================================
+-- ==============================================
+-- ==============================================
+-- CRUDS 
+--===============================================
+-- ==============================================
+-- ==============================================
+
+----CRUD para la Tabla FIDE_USUARIOS_TB
+--Crear Usuario
+CREATE OR REPLACE PROCEDURE FIDE_INSERTAR_USUARIO(
+    p_nombre_usuario IN VARCHAR2,
+    p_contrasena IN VARCHAR2,
+    p_rol_id IN NUMBER
+) IS
+BEGIN
+    INSERT INTO FIDE_USUARIOS_TB (FIDE_NOMBRE_USUARIO, FIDE_CONTRASENA, 
+    FIDE_ROL_ID, FIDE_ESTADO_USUARIO)
+    VALUES (p_nombre_usuario, p_contrasena, p_rol_id, 'ACTIVO');
+END;
+/
+--Leer Usuario
+CREATE OR REPLACE PROCEDURE FIDE_LEER_USUARIO(
+    p_usuario_id IN NUMBER,
+    o_nombre_usuario OUT VARCHAR2,
+    o_rol_id OUT NUMBER,
+    o_estado OUT VARCHAR2
+) IS
+BEGIN
+    SELECT FIDE_NOMBRE_USUARIO, FIDE_ROL_ID, FIDE_ESTADO_USUARIO
+    INTO o_nombre_usuario, o_rol_id, o_estado
+    FROM FIDE_USUARIOS_TB
+    WHERE FIDE_USUARIO_ID = p_usuario_id;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        o_nombre_usuario := NULL;
+        o_rol_id := NULL;
+        o_estado := NULL;
+END;
+/
+--Actualizar Usuario
+CREATE OR REPLACE PROCEDURE FIDE_ACTUALIZAR_USUARIO(
+    p_usuario_id IN NUMBER,
+    p_nombre_usuario IN VARCHAR2,
+    p_contrasena IN VARCHAR2,
+    p_rol_id IN NUMBER,
+    p_estado IN VARCHAR2
+) IS
+BEGIN
+    UPDATE FIDE_USUARIOS_TB
+    SET FIDE_NOMBRE_USUARIO = p_nombre_usuario,
+        FIDE_CONTRASENA = p_contrasena,
+        FIDE_ROL_ID = p_rol_id,
+        FIDE_ESTADO_USUARIO = p_estado
+    WHERE FIDE_USUARIO_ID = p_usuario_id;
+END;
+/
+--Eliminar Usuario
+CREATE OR REPLACE PROCEDURE FIDE_ELIMINAR_USUARIO(
+    p_usuario_id IN NUMBER
+) IS
+BEGIN
+    DELETE FROM FIDE_USUARIOS_TB
+    WHERE FIDE_USUARIO_ID = p_usuario_id;
+END;
+/
 
 
 
