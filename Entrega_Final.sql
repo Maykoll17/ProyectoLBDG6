@@ -1677,7 +1677,1667 @@ BEGIN
 END;
 /
 
+--9. Paquete de Autenticación 
 
+CREATE SEQUENCE fide_usuarios_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE PACKAGE fide_autenticacion_pkg AS
+    PROCEDURE fide_validar_credenciales_proc (
+        p_nombre_usuario IN VARCHAR2,
+        p_contrasena     IN VARCHAR2,
+        p_resultado      OUT VARCHAR2
+    );
+
+    PROCEDURE fide_registrar_usuario_proc (
+        p_nombre_usuario IN VARCHAR2,
+        p_contrasena     IN VARCHAR2,
+        p_rol_id         IN NUMBER
+    );
+
+    PROCEDURE fide_cambiar_contrasena_proc (
+        p_nombre_usuario    IN VARCHAR2,
+        p_contrasena_actual IN VARCHAR2,
+        p_contrasena_nueva  IN VARCHAR2
+    );
+
+    PROCEDURE fide_recuperar_contrasena_proc (
+        p_nombre_usuario   IN VARCHAR2,
+        p_nueva_contrasena IN VARCHAR2
+    );
+
+    PROCEDURE fide_bloquear_usuario_proc (
+        p_nombre_usuario IN VARCHAR2
+    );
+
+    PROCEDURE fide_desbloquear_usuario_proc (
+        p_nombre_usuario IN VARCHAR2
+    );
+
+END fide_autenticacion_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_autenticacion_pkg AS
+
+    PROCEDURE fide_validar_credenciales_proc (
+        p_nombre_usuario IN VARCHAR2,
+        p_contrasena     IN VARCHAR2,
+        p_resultado      OUT VARCHAR2
+    ) IS
+
+        v_usuario_id    fide_usuarios_tb.fide_usuario_id%TYPE;
+        v_estado        fide_usuarios_tb.fide_estado_usuario%TYPE;
+        v_contrasena_bd fide_usuarios_tb.fide_contrasena%TYPE;
+        v_intentos      NUMBER;
+    BEGIN
+        SELECT
+            fide_usuario_id,
+            fide_contrasena,
+            fide_estado_usuario,
+            fide_intentos_fallidos
+        INTO
+            v_usuario_id,
+            v_contrasena_bd,
+            v_estado,
+            v_intentos
+        FROM
+            fide_usuarios_tb
+        WHERE
+            fide_nombre_usuario = p_nombre_usuario;
+
+        IF v_estado = 'BLOQUEADO' THEN
+            p_resultado := 'USUARIO BLOQUEADO';
+            RETURN;
+        END IF;
+        IF v_contrasena_bd = p_contrasena THEN
+            UPDATE fide_usuarios_tb
+            SET
+                fide_intentos_fallidos = 0,
+                fide_ultima_conexion = systimestamp
+            WHERE
+                fide_usuario_id = v_usuario_id;
+
+            p_resultado := 'AUTENTICADO';
+        ELSE
+            v_intentos := v_intentos + 1;
+            IF v_intentos >= 3 THEN
+                UPDATE fide_usuarios_tb
+                SET
+                    fide_estado_usuario = 'BLOQUEADO',
+                    fide_intentos_fallidos = v_intentos
+                WHERE
+                    fide_usuario_id = v_usuario_id;
+
+                p_resultado := 'USUARIO BLOQUEADO POR INTENTOS';
+            ELSE
+                UPDATE fide_usuarios_tb
+                SET
+                    fide_intentos_fallidos = v_intentos
+                WHERE
+                    fide_usuario_id = v_usuario_id;
+
+                p_resultado := 'CREDENCIALES INVALIDAS';
+            END IF;
+
+        END IF;
+
+    EXCEPTION
+        WHEN no_data_found THEN
+            p_resultado := 'USUARIO NO EXISTE';
+        WHEN OTHERS THEN
+            p_resultado := 'ERROR: ' || sqlerrm;
+    END;
+
+    PROCEDURE fide_registrar_usuario_proc (
+        p_nombre_usuario IN VARCHAR2,
+        p_contrasena     IN VARCHAR2,
+        p_rol_id         IN NUMBER
+    ) IS
+    BEGIN
+        INSERT INTO fide_usuarios_tb (
+            fide_usuario_id,
+            fide_nombre_usuario,
+            fide_contrasena,
+            fide_rol_id
+        ) VALUES ( fide_usuarios_seq.NEXTVAL,
+                   p_nombre_usuario,
+                   p_contrasena,
+                   p_rol_id );
+
+    END;
+
+    PROCEDURE fide_cambiar_contrasena_proc (
+        p_nombre_usuario    IN VARCHAR2,
+        p_contrasena_actual IN VARCHAR2,
+        p_contrasena_nueva  IN VARCHAR2
+    ) IS
+        v_contrasena_actual VARCHAR2(100);
+    BEGIN
+        SELECT
+            fide_contrasena
+        INTO v_contrasena_actual
+        FROM
+            fide_usuarios_tb
+        WHERE
+            fide_nombre_usuario = p_nombre_usuario;
+
+        IF v_contrasena_actual = p_contrasena_actual THEN
+            UPDATE fide_usuarios_tb
+            SET
+                fide_contrasena = p_contrasena_nueva
+            WHERE
+                fide_nombre_usuario = p_nombre_usuario;
+
+        ELSE
+            raise_application_error(-20002, 'Contraseña actual incorrecta.');
+        END IF;
+
+    END;
+
+    PROCEDURE fide_recuperar_contrasena_proc (
+        p_nombre_usuario   IN VARCHAR2,
+        p_nueva_contrasena IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_usuarios_tb
+        SET
+            fide_contrasena = p_nueva_contrasena,
+            fide_intentos_fallidos = 0,
+            fide_estado_usuario = 'ACTIVO'
+        WHERE
+            fide_nombre_usuario = p_nombre_usuario;
+
+    END;
+
+    PROCEDURE fide_bloquear_usuario_proc (
+        p_nombre_usuario IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_usuarios_tb
+        SET
+            fide_estado_usuario = 'BLOQUEADO'
+        WHERE
+            fide_nombre_usuario = p_nombre_usuario;
+
+    END;
+
+    PROCEDURE fide_desbloquear_usuario_proc (
+        p_nombre_usuario IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_usuarios_tb
+        SET
+            fide_estado_usuario = 'ACTIVO',
+            fide_intentos_fallidos = 0
+        WHERE
+            fide_nombre_usuario = p_nombre_usuario;
+
+    END;
+
+END fide_autenticacion_pkg;
+/
+
+--10. Paquete de Pacientes
+
+CREATE OR REPLACE PACKAGE fide_pacientes_pkg AS
+    PROCEDURE fide_registrar_paciente_proc (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    );
+
+    PROCEDURE fide_actualizar_paciente_proc (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    );
+
+    PROCEDURE fide_eliminar_paciente_proc (
+        p_cedula IN VARCHAR2
+    );
+
+    PROCEDURE fide_buscar_paciente_proc (
+        p_cedula IN VARCHAR2
+    );
+
+    PROCEDURE fide_obtener_historial_medico_proc (
+        p_cedula IN VARCHAR2
+    );
+
+    PROCEDURE fide_registrar_historial_medico_proc (
+        p_cedula_paciente IN VARCHAR2,
+        p_cedula_empleado IN VARCHAR2,
+        p_diagnostico     IN VARCHAR2,
+        p_tratamiento     IN VARCHAR2,
+        p_observaciones   IN VARCHAR2
+    );
+
+END fide_pacientes_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_pacientes_pkg AS
+
+    PROCEDURE fide_registrar_paciente_proc (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    ) IS
+    BEGIN
+        INSERT INTO fide_pacientes_tb (
+            fide_paciente_cedula,
+            fide_nombre_paciente,
+            fide_apellidos_paciente,
+            fide_telefono_paciente,
+            fide_direccion_paciente,
+            fide_correo_paciente,
+            fide_estado_paciente_id,
+            fide_deuda_paciente
+        ) VALUES ( p_cedula,
+                   p_nombre,
+                   p_apellidos,
+                   p_telefono,
+                   p_direccion,
+                   p_correo,
+                   p_estado_id,
+                   p_deuda );
+
+    END;
+
+    PROCEDURE fide_actualizar_paciente_proc (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    ) IS
+    BEGIN
+        UPDATE fide_pacientes_tb
+        SET
+            fide_nombre_paciente = p_nombre,
+            fide_apellidos_paciente = p_apellidos,
+            fide_telefono_paciente = p_telefono,
+            fide_direccion_paciente = p_direccion,
+            fide_correo_paciente = p_correo,
+            fide_estado_paciente_id = p_estado_id,
+            fide_deuda_paciente = p_deuda
+        WHERE
+            fide_paciente_cedula = p_cedula;
+
+    END;
+
+    PROCEDURE fide_eliminar_paciente_proc (
+        p_cedula IN VARCHAR2
+    ) IS
+    BEGIN
+        DELETE FROM fide_pacientes_tb
+        WHERE
+            fide_paciente_cedula = p_cedula;
+
+    END;
+
+    PROCEDURE fide_buscar_paciente_proc (
+        p_cedula IN VARCHAR2
+    ) IS
+
+        v_nombre    fide_pacientes_tb.fide_nombre_paciente%TYPE;
+        v_apellidos fide_pacientes_tb.fide_apellidos_paciente%TYPE;
+        v_telefono  fide_pacientes_tb.fide_telefono_paciente%TYPE;
+        v_direccion fide_pacientes_tb.fide_direccion_paciente%TYPE;
+        v_correo    fide_pacientes_tb.fide_correo_paciente%TYPE;
+        v_estado_id fide_pacientes_tb.fide_estado_paciente_id%TYPE;
+        v_deuda     fide_pacientes_tb.fide_deuda_paciente%TYPE;
+    BEGIN
+        SELECT
+            fide_nombre_paciente,
+            fide_apellidos_paciente,
+            fide_telefono_paciente,
+            fide_direccion_paciente,
+            fide_correo_paciente,
+            fide_estado_paciente_id,
+            fide_deuda_paciente
+        INTO
+            v_nombre,
+            v_apellidos,
+            v_telefono,
+            v_direccion,
+            v_correo,
+            v_estado_id,
+            v_deuda
+        FROM
+            fide_pacientes_tb
+        WHERE
+            fide_paciente_cedula = p_cedula;
+
+        dbms_output.put_line('Nombre: ' || v_nombre);
+        dbms_output.put_line('Apellidos: ' || v_apellidos);
+        dbms_output.put_line('Teléfono: ' || v_telefono);
+        dbms_output.put_line('Dirección: ' || v_direccion);
+        dbms_output.put_line('Correo: ' || v_correo);
+        dbms_output.put_line('Estado ID: ' || v_estado_id);
+        dbms_output.put_line('Deuda: ' || v_deuda);
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('Paciente no encontrado.');
+    END;
+
+    PROCEDURE fide_obtener_historial_medico_proc (
+        p_cedula IN VARCHAR2
+    ) IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                fide_fecha_registro,
+                fide_diagnostico,
+                fide_tratamiento,
+                fide_observaciones
+            FROM
+                fide_historial_medico_tb
+            WHERE
+                fide_paciente_cedula = p_cedula
+            ORDER BY
+                fide_fecha_registro DESC
+        ) LOOP
+            dbms_output.put_line('Fecha: ' || r.fide_fecha_registro);
+            dbms_output.put_line('Diagnóstico: ' || r.fide_diagnostico);
+            dbms_output.put_line('Tratamiento: ' || r.fide_tratamiento);
+            dbms_output.put_line('Observaciones: ' || r.fide_observaciones);
+            dbms_output.put_line('------------------------------');
+        END LOOP;
+    END;
+
+    PROCEDURE fide_registrar_historial_medico_proc (
+        p_cedula_paciente IN VARCHAR2,
+        p_cedula_empleado IN VARCHAR2,
+        p_diagnostico     IN VARCHAR2,
+        p_tratamiento     IN VARCHAR2,
+        p_observaciones   IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_historial_medico_tb (
+            fide_paciente_cedula,
+            fide_empleado_cedula,
+            fide_diagnostico,
+            fide_tratamiento,
+            fide_observaciones
+        ) VALUES ( p_cedula_paciente,
+                   p_cedula_empleado,
+                   p_diagnostico,
+                   p_tratamiento,
+                   p_observaciones );
+
+    END;
+
+END fide_pacientes_pkg;
+/
+
+--11. Paquete de Citas
+
+CREATE OR REPLACE PACKAGE fide_citas_pkg IS
+    PROCEDURE fide_agendar_cita_proc (
+        p_paciente_cedula IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_empleado_cedula IN fide_empleados_tb.fide_empleado_cedula%TYPE,
+        p_fecha_cita      IN TIMESTAMP,
+        p_sala_id         IN fide_salas_tb.fide_sala_id%TYPE,
+        p_motivo_cita     IN fide_citas_tb.fide_motivo_cita%TYPE
+    );
+
+    PROCEDURE fide_cancelar_cita_proc (
+        p_cita_id IN fide_citas_tb.fide_cita_id%TYPE
+    );
+
+    PROCEDURE fide_reprogramar_cita_proc (
+        p_cita_id     IN fide_citas_tb.fide_cita_id%TYPE,
+        p_nueva_fecha IN TIMESTAMP
+    );
+
+    PROCEDURE fide_listar_citas_paciente_proc (
+        p_paciente_cedula IN fide_pacientes_tb.fide_paciente_cedula%TYPE
+    );
+
+    PROCEDURE fide_listar_citas_empleado_proc (
+        p_empleado_cedula IN fide_empleados_tb.fide_empleado_cedula%TYPE
+    );
+
+    PROCEDURE fide_verificar_disponibilidad_cita_proc (
+        p_sala_id    IN fide_salas_tb.fide_sala_id%TYPE,
+        p_fecha_cita IN TIMESTAMP
+    );
+
+END fide_citas_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_citas_pkg IS
+
+    PROCEDURE fide_agendar_cita_proc (
+        p_paciente_cedula IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_empleado_cedula IN fide_empleados_tb.fide_empleado_cedula%TYPE,
+        p_fecha_cita      IN TIMESTAMP,
+        p_sala_id         IN fide_salas_tb.fide_sala_id%TYPE,
+        p_motivo_cita     IN fide_citas_tb.fide_motivo_cita%TYPE
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_citas_tb
+        WHERE
+                fide_sala_id = p_sala_id
+            AND fide_fecha_cita = p_fecha_cita;
+
+        IF v_count > 0 THEN
+            raise_application_error(-20002, 'La sala no está disponible en la fecha y hora especificadas.');
+        END IF;
+        INSERT INTO fide_citas_tb (
+            fide_cita_id,
+            fide_paciente_cedula,
+            fide_empleado_cedula,
+            fide_fecha_cita,
+            fide_sala_id,
+            fide_motivo_cita
+        ) VALUES ( fide_seq_citas.NEXTVAL,
+                   p_paciente_cedula,
+                   p_empleado_cedula,
+                   p_fecha_cita,
+                   p_sala_id,
+                   p_motivo_cita );
+
+    END;
+
+    PROCEDURE fide_cancelar_cita_proc (
+        p_cita_id IN fide_citas_tb.fide_cita_id%TYPE
+    ) IS
+    BEGIN
+        DELETE FROM fide_citas_tb
+        WHERE
+            fide_cita_id = p_cita_id;
+
+    END;
+
+    PROCEDURE fide_reprogramar_cita_proc (
+        p_cita_id     IN fide_citas_tb.fide_cita_id%TYPE,
+        p_nueva_fecha IN TIMESTAMP
+    ) IS
+        v_sala_id fide_citas_tb.fide_sala_id%TYPE;
+        v_count   NUMBER;
+    BEGIN
+        SELECT
+            fide_sala_id
+        INTO v_sala_id
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_cita_id = p_cita_id;
+
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_citas_tb
+        WHERE
+                fide_sala_id = v_sala_id
+            AND fide_fecha_cita = p_nueva_fecha;
+
+        IF v_count > 0 THEN
+            raise_application_error(-20003, 'La nueva fecha ya tiene una cita programada en esa sala.');
+        END IF;
+        UPDATE fide_citas_tb
+        SET
+            fide_fecha_cita = p_nueva_fecha
+        WHERE
+            fide_cita_id = p_cita_id;
+
+    END;
+
+    PROCEDURE fide_listar_citas_paciente_proc (
+        p_paciente_cedula IN fide_pacientes_tb.fide_paciente_cedula%TYPE
+    ) IS
+
+        CURSOR c_citas IS
+        SELECT
+            fide_cita_id,
+            fide_fecha_cita,
+            fide_motivo_cita
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_paciente_cedula = p_paciente_cedula
+        ORDER BY
+            fide_fecha_cita;
+
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_paciente_cedula = p_paciente_cedula;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line(' El paciente no tiene citas agendadas.');
+        ELSE
+            FOR cita IN c_citas LOOP
+                dbms_output.put_line(' Cita ID: ' || cita.fide_cita_id);
+                dbms_output.put_line('   Fecha:   '
+                                     || to_char(cita.fide_fecha_cita, 'DD-MM-YYYY HH24:MI'));
+                dbms_output.put_line('   Motivo:  ' || cita.fide_motivo_cita);
+                dbms_output.put_line('---------------------------');
+            END LOOP;
+        END IF;
+
+    END;
+
+    PROCEDURE fide_listar_citas_empleado_proc (
+        p_empleado_cedula IN fide_empleados_tb.fide_empleado_cedula%TYPE
+    ) IS
+
+        CURSOR c_citas IS
+        SELECT
+            fide_cita_id,
+            fide_fecha_cita,
+            fide_motivo_cita
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_empleado_cedula = p_empleado_cedula
+        ORDER BY
+            fide_fecha_cita;
+
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_empleado_cedula = p_empleado_cedula;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line(' El empleado no tiene citas agendadas.');
+        ELSE
+            FOR cita IN c_citas LOOP
+                dbms_output.put_line('   Cita ID: ' || cita.fide_cita_id);
+                dbms_output.put_line('   Fecha:   '
+                                     || to_char(cita.fide_fecha_cita, 'DD-MM-YYYY HH24:MI'));
+                dbms_output.put_line('   Motivo:  ' || cita.fide_motivo_cita);
+                dbms_output.put_line('---------------------------');
+            END LOOP;
+        END IF;
+
+    END;
+
+    PROCEDURE fide_verificar_disponibilidad_cita_proc (
+        p_sala_id    IN fide_salas_tb.fide_sala_id%TYPE,
+        p_fecha_cita IN TIMESTAMP
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_citas_tb
+        WHERE
+                fide_sala_id = p_sala_id
+            AND fide_fecha_cita = p_fecha_cita;
+
+        IF v_count > 0 THEN
+            dbms_output.put_line('La sala NO está disponible.');
+        ELSE
+            dbms_output.put_line('La sala está disponible.');
+        END IF;
+
+    END;
+
+END fide_citas_pkg;
+/
+
+--12. Paquete de Medicamentos
+CREATE OR REPLACE PACKAGE fide_medicamentos_pkg AS
+    PROCEDURE fide_registrar_medicamento_proc (
+        p_nombre   IN fide_medicamentos_tb.fide_nombre_medicamento%TYPE,
+        p_precio   IN fide_medicamentos_tb.fide_precio_medicamento%TYPE,
+        p_cantidad IN fide_medicamentos_tb.fide_cantidad_medicamento%TYPE,
+        p_info     IN fide_medicamentos_tb.fide_informacion_medicamento%TYPE
+    );
+
+    PROCEDURE fide_actualizar_medicamento_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_nombre   IN fide_medicamentos_tb.fide_nombre_medicamento%TYPE,
+        p_precio   IN fide_medicamentos_tb.fide_precio_medicamento%TYPE,
+        p_cantidad IN fide_medicamentos_tb.fide_cantidad_medicamento%TYPE,
+        p_info     IN fide_medicamentos_tb.fide_informacion_medicamento%TYPE
+    );
+
+    PROCEDURE fide_eliminar_medicamento_proc (
+        p_id IN fide_medicamentos_tb.fide_medicamento_id%TYPE
+    );
+
+    PROCEDURE fide_decrementar_stock_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_paciente IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_cantidad IN NUMBER
+    );
+
+    PROCEDURE fide_incrementar_stock_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_paciente IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_cantidad IN NUMBER
+    );
+
+    PROCEDURE fide_verificar_stock_minimo_proc (
+        p_id     IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_minimo IN NUMBER DEFAULT 50
+    );
+
+END fide_medicamentos_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_medicamentos_pkg AS
+
+    PROCEDURE fide_registrar_medicamento_proc (
+        p_nombre   IN fide_medicamentos_tb.fide_nombre_medicamento%TYPE,
+        p_precio   IN fide_medicamentos_tb.fide_precio_medicamento%TYPE,
+        p_cantidad IN fide_medicamentos_tb.fide_cantidad_medicamento%TYPE,
+        p_info     IN fide_medicamentos_tb.fide_informacion_medicamento%TYPE
+    ) IS
+    BEGIN
+        INSERT INTO fide_medicamentos_tb (
+            fide_nombre_medicamento,
+            fide_precio_medicamento,
+            fide_cantidad_medicamento,
+            fide_informacion_medicamento
+        ) VALUES ( p_nombre,
+                   p_precio,
+                   p_cantidad,
+                   p_info );
+
+        dbms_output.put_line('Medicamento registrado correctamente.');
+    END;
+
+    PROCEDURE fide_actualizar_medicamento_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_nombre   IN fide_medicamentos_tb.fide_nombre_medicamento%TYPE,
+        p_precio   IN fide_medicamentos_tb.fide_precio_medicamento%TYPE,
+        p_cantidad IN fide_medicamentos_tb.fide_cantidad_medicamento%TYPE,
+        p_info     IN fide_medicamentos_tb.fide_informacion_medicamento%TYPE
+    ) IS
+    BEGIN
+        UPDATE fide_medicamentos_tb
+        SET
+            fide_nombre_medicamento = p_nombre,
+            fide_precio_medicamento = p_precio,
+            fide_cantidad_medicamento = p_cantidad,
+            fide_informacion_medicamento = p_info
+        WHERE
+            fide_medicamento_id = p_id;
+
+        dbms_output.put_line('Medicamento actualizado correctamente.');
+    END;
+
+    PROCEDURE fide_eliminar_medicamento_proc (
+        p_id IN fide_medicamentos_tb.fide_medicamento_id%TYPE
+    ) IS
+    BEGIN
+        DELETE FROM fide_medicamentos_tb
+        WHERE
+            fide_medicamento_id = p_id;
+
+        dbms_output.put_line('Medicamento eliminado correctamente.');
+    END;
+
+    PROCEDURE fide_decrementar_stock_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_paciente IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_cantidad IN NUMBER
+    ) IS
+        v_stock NUMBER;
+    BEGIN
+        SELECT
+            fide_cantidad_medicamento
+        INTO v_stock
+        FROM
+            fide_medicamentos_tb
+        WHERE
+            fide_medicamento_id = p_id;
+
+        IF v_stock < p_cantidad THEN
+            raise_application_error(-20010, 'Stock insuficiente.');
+        END IF;
+        UPDATE fide_medicamentos_tb
+        SET
+            fide_cantidad_medicamento = fide_cantidad_medicamento - p_cantidad
+        WHERE
+            fide_medicamento_id = p_id;
+
+        INSERT INTO fide_medicamentos_reservados_tb (
+            fide_paciente_cedula,
+            fide_medicamento_id,
+            fide_cantidad_medicamento
+        ) VALUES ( p_paciente,
+                   p_id,
+                   p_cantidad );
+
+        dbms_output.put_line('Stock actualizado y medicamento reservado.');
+    END;
+
+    PROCEDURE fide_incrementar_stock_proc (
+        p_id       IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_paciente IN fide_pacientes_tb.fide_paciente_cedula%TYPE,
+        p_cantidad IN NUMBER
+    ) IS
+        v_reserva_id NUMBER;
+        v_reservado  NUMBER;
+    BEGIN
+        SELECT
+            fide_reserva_id,
+            fide_cantidad_medicamento
+        INTO
+            v_reserva_id,
+            v_reservado
+        FROM
+            fide_medicamentos_reservados_tb
+        WHERE
+                fide_medicamento_id = p_id
+            AND fide_paciente_cedula = p_paciente
+        FETCH FIRST 1 ROWS ONLY;
+
+        IF p_cantidad >= v_reservado THEN
+            DELETE FROM fide_medicamentos_reservados_tb
+            WHERE
+                fide_reserva_id = v_reserva_id;
+
+        ELSE
+            UPDATE fide_medicamentos_reservados_tb
+            SET
+                fide_cantidad_medicamento = fide_cantidad_medicamento - p_cantidad
+            WHERE
+                fide_reserva_id = v_reserva_id;
+
+        END IF;
+
+        UPDATE fide_medicamentos_tb
+        SET
+            fide_cantidad_medicamento = fide_cantidad_medicamento + p_cantidad
+        WHERE
+            fide_medicamento_id = p_id;
+
+        dbms_output.put_line('Stock actualizado y reserva ajustada.');
+    EXCEPTION
+        WHEN no_data_found THEN
+            UPDATE fide_medicamentos_tb
+            SET
+                fide_cantidad_medicamento = fide_cantidad_medicamento + p_cantidad
+            WHERE
+                fide_medicamento_id = p_id;
+
+            dbms_output.put_line('Stock actualizado.');
+    END;
+
+    PROCEDURE fide_verificar_stock_minimo_proc (
+        p_id     IN fide_medicamentos_tb.fide_medicamento_id%TYPE,
+        p_minimo IN NUMBER DEFAULT 50
+    ) IS
+        v_stock NUMBER;
+    BEGIN
+        SELECT
+            fide_cantidad_medicamento
+        INTO v_stock
+        FROM
+            fide_medicamentos_tb
+        WHERE
+            fide_medicamento_id = p_id;
+
+        IF v_stock < p_minimo THEN
+            dbms_output.put_line('Stock actual ('
+                                 || v_stock
+                                 || ') por debajo del mínimo requerido ('
+                                 || p_minimo
+                                 || ').');
+
+        ELSE
+            dbms_output.put_line('Stock suficiente: '
+                                 || v_stock
+                                 || ' unidades disponibles.');
+        END IF;
+
+    END;
+
+END fide_medicamentos_pkg;
+/
+
+--13. Paquete de Salas
+
+CREATE OR REPLACE PACKAGE fide_salas_pkg IS
+    PROCEDURE fide_registrar_sala_proc (
+        p_capacidad      IN fide_salas_tb.fide_capacidad_sala%TYPE,
+        p_tipo_sala_id   IN fide_salas_tb.fide_tipo_sala_id%TYPE,
+        p_estado_sala_id IN fide_salas_tb.fide_estado_sala_id%TYPE,
+        p_precio_hora    IN fide_salas_tb.fide_precio_hora_sala%TYPE
+    );
+
+    PROCEDURE fide_actualizar_sala_proc (
+        p_sala_id        IN fide_salas_tb.fide_sala_id%TYPE,
+        p_capacidad      IN fide_salas_tb.fide_capacidad_sala%TYPE,
+        p_tipo_sala_id   IN fide_salas_tb.fide_tipo_sala_id%TYPE,
+        p_estado_sala_id IN fide_salas_tb.fide_estado_sala_id%TYPE,
+        p_precio_hora    IN fide_salas_tb.fide_precio_hora_sala%TYPE
+    );
+
+    PROCEDURE fide_eliminar_sala_proc (
+        p_sala_id IN fide_salas_tb.fide_sala_id%TYPE
+    );
+
+    PROCEDURE fide_alquilar_sala_proc (
+        p_sala_id       IN fide_salas_tb.fide_sala_id%TYPE,
+        p_doctor_nombre IN fide_alquileres_tb.fide_doctor_alquiler%TYPE,
+        p_fecha_inicio  IN fide_alquileres_tb.fide_fecha_inicio_alquiler%TYPE,
+        p_fecha_fin     IN fide_alquileres_tb.fide_fecha_fin_alquiler%TYPE
+    );
+
+    PROCEDURE fide_liberar_sala_proc (
+        p_alquiler_id IN fide_alquileres_tb.fide_alquiler_id%TYPE
+    );
+
+    PROCEDURE fide_verificar_disponibilidad_sala_proc (
+        p_sala_id      IN fide_salas_tb.fide_sala_id%TYPE,
+        p_fecha_inicio IN TIMESTAMP,
+        p_fecha_fin    IN TIMESTAMP
+    );
+
+END fide_salas_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_salas_pkg IS
+
+    PROCEDURE fide_registrar_sala_proc (
+        p_capacidad      IN fide_salas_tb.fide_capacidad_sala%TYPE,
+        p_tipo_sala_id   IN fide_salas_tb.fide_tipo_sala_id%TYPE,
+        p_estado_sala_id IN fide_salas_tb.fide_estado_sala_id%TYPE,
+        p_precio_hora    IN fide_salas_tb.fide_precio_hora_sala%TYPE
+    ) IS
+    BEGIN
+        INSERT INTO fide_salas_tb (
+            fide_capacidad_sala,
+            fide_tipo_sala_id,
+            fide_estado_sala_id,
+            fide_precio_hora_sala
+        ) VALUES ( p_capacidad,
+                   p_tipo_sala_id,
+                   p_estado_sala_id,
+                   p_precio_hora );
+
+        dbms_output.put_line('Sala registrada correctamente.');
+    END;
+
+    PROCEDURE fide_actualizar_sala_proc (
+        p_sala_id        IN fide_salas_tb.fide_sala_id%TYPE,
+        p_capacidad      IN fide_salas_tb.fide_capacidad_sala%TYPE,
+        p_tipo_sala_id   IN fide_salas_tb.fide_tipo_sala_id%TYPE,
+        p_estado_sala_id IN fide_salas_tb.fide_estado_sala_id%TYPE,
+        p_precio_hora    IN fide_salas_tb.fide_precio_hora_sala%TYPE
+    ) IS
+    BEGIN
+        UPDATE fide_salas_tb
+        SET
+            fide_capacidad_sala = p_capacidad,
+            fide_tipo_sala_id = p_tipo_sala_id,
+            fide_estado_sala_id = p_estado_sala_id,
+            fide_precio_hora_sala = p_precio_hora
+        WHERE
+            fide_sala_id = p_sala_id;
+
+        dbms_output.put_line('Sala actualizada correctamente.');
+    END fide_actualizar_sala_proc;
+
+    PROCEDURE fide_eliminar_sala_proc (
+        p_sala_id IN fide_salas_tb.fide_sala_id%TYPE
+    ) IS
+    BEGIN
+        DELETE FROM fide_salas_tb
+        WHERE
+            fide_sala_id = p_sala_id;
+
+        dbms_output.put_line('Sala eliminada correctamente.');
+    END;
+
+    PROCEDURE fide_verificar_disponibilidad_sala_proc (
+        p_sala_id      IN fide_salas_tb.fide_sala_id%TYPE,
+        p_fecha_inicio IN TIMESTAMP,
+        p_fecha_fin    IN TIMESTAMP
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_alquileres_tb
+        WHERE
+                fide_sala_id = p_sala_id
+            AND ( ( p_fecha_inicio BETWEEN fide_fecha_inicio_alquiler AND nvl(fide_fecha_fin_alquiler, systimestamp) )
+                  OR ( p_fecha_fin BETWEEN fide_fecha_inicio_alquiler AND nvl(fide_fecha_fin_alquiler, systimestamp) )
+                  OR ( fide_fecha_inicio_alquiler BETWEEN p_fecha_inicio AND p_fecha_fin ) );
+
+        IF v_count > 0 THEN
+            raise_application_error(-20002, 'La sala no está disponible en la fecha y hora especificadas.');
+        ELSE
+            dbms_output.put_line('La sala está disponible');
+        END IF;
+
+    END;
+
+    PROCEDURE fide_alquilar_sala_proc (
+        p_sala_id       IN fide_salas_tb.fide_sala_id%TYPE,
+        p_doctor_nombre IN fide_alquileres_tb.fide_doctor_alquiler%TYPE,
+        p_fecha_inicio  IN fide_alquileres_tb.fide_fecha_inicio_alquiler%TYPE,
+        p_fecha_fin     IN fide_alquileres_tb.fide_fecha_fin_alquiler%TYPE
+    ) IS
+        v_precio_hora fide_salas_tb.fide_precio_hora_sala%TYPE;
+        v_total       NUMBER;
+    BEGIN
+        fide_verificar_disponibilidad_sala_proc(p_sala_id, p_fecha_inicio, p_fecha_fin);
+        SELECT
+            fide_precio_hora_sala
+        INTO v_precio_hora
+        FROM
+            fide_salas_tb
+        WHERE
+            fide_sala_id = p_sala_id;
+
+        v_total := v_precio_hora * ( extract(HOUR FROM ( p_fecha_fin - p_fecha_inicio )) + extract(MINUTE FROM ( p_fecha_fin - p_fecha_inicio
+        )) / 60 );
+
+        INSERT INTO fide_alquileres_tb (
+            fide_sala_id,
+            fide_doctor_alquiler,
+            fide_fecha_inicio_alquiler,
+            fide_fecha_fin_alquiler,
+            fide_total_alquiler
+        ) VALUES ( p_sala_id,
+                   p_doctor_nombre,
+                   p_fecha_inicio,
+                   p_fecha_fin,
+                   v_total );
+
+        UPDATE fide_salas_tb
+        SET
+            fide_estado_sala_id = 2
+        WHERE
+            fide_sala_id = p_sala_id;
+
+        dbms_output.put_line('Sala alquilada con éxito. Total: ₡' || v_total);
+    EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error al alquilar sala: ' || sqlerrm);
+    END;
+
+    PROCEDURE fide_liberar_sala_proc (
+        p_alquiler_id IN fide_alquileres_tb.fide_alquiler_id%TYPE
+    ) IS
+        v_sala_id fide_salas_tb.fide_sala_id%TYPE;
+    BEGIN
+        SELECT
+            fide_sala_id
+        INTO v_sala_id
+        FROM
+            fide_alquileres_tb
+        WHERE
+            fide_alquiler_id = p_alquiler_id;
+
+        UPDATE fide_alquileres_tb
+        SET
+            fide_fecha_fin_alquiler = systimestamp
+        WHERE
+            fide_alquiler_id = p_alquiler_id;
+
+        UPDATE fide_salas_tb
+        SET
+            fide_estado_sala_id = 1
+        WHERE
+            fide_sala_id = v_sala_id;
+
+        dbms_output.put_line('Sala liberada correctamente.');
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('No se encontró el alquiler con ID: ' || p_alquiler_id);
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error al liberar sala: ' || sqlerrm);
+    END;
+
+END fide_salas_pkg;
+/
+
+--14. Paquete de Facturación
+
+--- Actualizacion de tabla Facturas para que permita el estado "Anulada"
+
+ALTER TABLE fide_facturas_tb DROP CONSTRAINT sys_c008658;
+
+ALTER TABLE fide_facturas_tb
+    ADD CONSTRAINT chk_estado_factura
+        CHECK ( fide_estado_factura IN ( 'COBRADO', 'PENDIENTE', 'ANULADA' ) );
+
+--- Actualizacion de tabla Citas para que permita el estado de la cita
+
+ALTER TABLE fide_citas_tb ADD fide_estado_cita VARCHAR2(20);
+
+ALTER TABLE fide_citas_tb
+    ADD CONSTRAINT chk_fide_estado_cita
+        CHECK ( fide_estado_cita IN ( 'ACTIVA', 'COMPLETADA', 'CANCELADA' ) );
+
+ALTER TABLE fide_citas_tb MODIFY
+    fide_estado_cita DEFAULT 'ACTIVA';
+
+    
+--Paquete de Facturacion---
+--Evita facturas duplicadas activas
+--Actualiza el inventario de medicamentos una vez completados
+--Actualiza el estado de las citas una vez pagadas
+--Anula facturas
+
+CREATE OR REPLACE PACKAGE fide_facturacion_pkg AS
+    PROCEDURE fide_generar_factura_proc (
+        p_paciente_cedula IN VARCHAR2
+    );
+
+    PROCEDURE fide_pagar_factura_proc (
+        p_factura_id      IN NUMBER,
+        p_metodo_pago     IN VARCHAR2,
+        p_monto_pagado    IN NUMBER,
+        p_referencia_pago IN VARCHAR2 DEFAULT NULL
+    );
+
+    PROCEDURE fide_actualizar_recursos_proc (
+        p_factura_id NUMBER
+    );
+
+    PROCEDURE fide_anular_factura_proc (
+        p_factura_id NUMBER
+    );
+
+    PROCEDURE fide_generar_recibo_proc (
+        p_factura_id      NUMBER,
+        p_metodo_pago     VARCHAR2,
+        p_monto_pagado    NUMBER,
+        p_referencia_pago VARCHAR2 := NULL
+    );
+
+    PROCEDURE fide_calcular_total_factura_proc (
+        p_factura_id NUMBER
+    );
+
+    PROCEDURE fide_aplicar_descuento_proc (
+        p_factura_id       NUMBER,
+        p_codigo_descuento VARCHAR2
+    );
+
+END fide_facturacion_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_facturacion_pkg AS
+
+    PROCEDURE fide_generar_factura_proc (
+        p_paciente_cedula IN VARCHAR2
+    ) IS
+
+        v_factura_id        NUMBER;
+        v_total             NUMBER := 0;
+        v_medicamento_total NUMBER := 0;
+        v_sala_total        NUMBER := 0;
+        v_cantidad          NUMBER;
+        v_factura_existente NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_factura_existente
+        FROM
+            fide_facturas_tb
+        WHERE
+                fide_paciente_cedula = p_paciente_cedula
+            AND fide_estado_factura = 'PENDIENTE';
+
+        IF v_factura_existente > 0 THEN
+            dbms_output.put_line('ERROR: El paciente ya tiene una factura pendiente.');
+            RETURN;
+        END IF;
+        INSERT INTO fide_facturas_tb (
+            fide_paciente_cedula,
+            fide_estado_factura,
+            fide_total_factura
+        ) VALUES ( p_paciente_cedula,
+                   'PENDIENTE',
+                   0 ) RETURNING fide_factura_id INTO v_factura_id;
+
+        FOR med IN (
+            SELECT
+                r.fide_medicamento_id,
+                r.fide_cantidad_medicamento,
+                m.fide_precio_medicamento,
+                m.fide_nombre_medicamento
+            FROM
+                     fide_medicamentos_reservados_tb r
+                JOIN fide_medicamentos_tb m ON r.fide_medicamento_id = m.fide_medicamento_id
+            WHERE
+                    r.fide_paciente_cedula = p_paciente_cedula
+                AND r.fide_estado_reserva = 'ACTIVA'
+        ) LOOP
+            v_cantidad := med.fide_cantidad_medicamento;
+            v_medicamento_total := v_medicamento_total + ( v_cantidad * med.fide_precio_medicamento );
+            INSERT INTO fide_detalles_facturas_tb (
+                fide_factura_id,
+                fide_descripcion_factura,
+                fide_monto_factura
+            ) VALUES ( v_factura_id,
+                       'Medicamento: '
+                       || med.fide_nombre_medicamento
+                       || ' x'
+                       || v_cantidad,
+                       v_cantidad * med.fide_precio_medicamento );
+
+        END LOOP;
+
+        FOR s IN (
+            SELECT
+                c.fide_sala_id,
+                SUM(s.fide_precio_hora_sala) AS total_precio
+            FROM
+                     fide_citas_tb c
+                JOIN fide_salas_tb s ON c.fide_sala_id = s.fide_sala_id
+            WHERE
+                    c.fide_paciente_cedula = p_paciente_cedula
+                AND c.fide_fecha_cita BETWEEN sysdate - 1 AND sysdate + 1
+                AND c.fide_estado_cita = 'ACTIVA'
+            GROUP BY
+                c.fide_sala_id
+        ) LOOP
+            v_sala_total := v_sala_total + s.total_precio;
+            INSERT INTO fide_detalles_facturas_tb (
+                fide_factura_id,
+                fide_descripcion_factura,
+                fide_monto_factura
+            ) VALUES ( v_factura_id,
+                       'Uso de sala ID: ' || s.fide_sala_id,
+                       s.total_precio );
+
+        END LOOP;
+
+        v_total := v_medicamento_total + v_sala_total;
+        UPDATE fide_facturas_tb
+        SET
+            fide_total_factura = v_total
+        WHERE
+            fide_factura_id = v_factura_id;
+
+        dbms_output.put_line('Factura generada correctamente.');
+    END;
+
+    PROCEDURE fide_pagar_factura_proc (
+        p_factura_id      IN NUMBER,
+        p_metodo_pago     IN VARCHAR2,
+        p_monto_pagado    IN NUMBER,
+        p_referencia_pago IN VARCHAR2 DEFAULT NULL
+    ) IS
+        v_total_factura   NUMBER;
+        v_estado_factura  VARCHAR2(20);
+        v_paciente_cedula VARCHAR2(20);
+    BEGIN
+        SELECT
+            fide_total_factura,
+            fide_estado_factura,
+            fide_paciente_cedula
+        INTO
+            v_total_factura,
+            v_estado_factura,
+            v_paciente_cedula
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_estado_factura = 'COBRADO' THEN
+            dbms_output.put_line('La factura ya fue cobrada.');
+            RETURN;
+        ELSIF v_estado_factura = 'ANULADA' THEN
+            dbms_output.put_line('No se puede pagar una factura anulada.');
+            RETURN;
+        END IF;
+
+        IF p_monto_pagado < v_total_factura THEN
+            dbms_output.put_line('Error: El monto pagado ('
+                                 || p_monto_pagado
+                                 || ') es menor al total de la factura ('
+                                 || v_total_factura
+                                 || ').');
+
+            RETURN;
+        END IF;
+
+        UPDATE fide_facturas_tb
+        SET
+            fide_estado_factura = 'COBRADO'
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        INSERT INTO fide_recibos_tb (
+            fide_factura_id,
+            fide_metodo_pago,
+            fide_monto_pagado,
+            fide_referencia_pago
+        ) VALUES ( p_factura_id,
+                   p_metodo_pago,
+                   p_monto_pagado,
+                   p_referencia_pago );
+
+        UPDATE fide_citas_tb
+        SET
+            fide_estado_cita = 'COMPLETADA'
+        WHERE
+                fide_paciente_cedula = v_paciente_cedula
+            AND fide_estado_cita = 'ACTIVA';
+
+        FOR med IN (
+            SELECT
+                r.fide_medicamento_id,
+                r.fide_cantidad_medicamento
+            FROM
+                fide_medicamentos_reservados_tb r
+            WHERE
+                    r.fide_paciente_cedula = v_paciente_cedula
+                AND r.fide_estado_reserva = 'ACTIVA'
+        ) LOOP
+            UPDATE fide_medicamentos_tb
+            SET
+                fide_cantidad_medicamento = fide_cantidad_medicamento - med.fide_cantidad_medicamento
+            WHERE
+                fide_medicamento_id = med.fide_medicamento_id;
+
+            UPDATE fide_medicamentos_reservados_tb
+            SET
+                fide_estado_reserva = 'COMPLETADA'
+            WHERE
+                    fide_paciente_cedula = v_paciente_cedula
+                AND fide_medicamento_id = med.fide_medicamento_id;
+
+        END LOOP;
+
+        dbms_output.put_line('Factura pagada exitosamente. Recursos actualizados.');
+    END;
+
+    PROCEDURE fide_actualizar_recursos_proc (
+        p_factura_id NUMBER
+    ) IS
+        v_paciente_cedula VARCHAR2(20);
+    BEGIN
+        SELECT
+            fide_paciente_cedula
+        INTO v_paciente_cedula
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        FOR med IN (
+            SELECT
+                r.fide_medicamento_id,
+                r.fide_cantidad_medicamento
+            FROM
+                fide_medicamentos_reservados_tb r
+            WHERE
+                r.fide_paciente_cedula = v_paciente_cedula
+        ) LOOP
+            UPDATE fide_medicamentos_tb
+            SET
+                fide_cantidad_medicamento = fide_cantidad_medicamento + med.fide_cantidad_medicamento
+            WHERE
+                fide_medicamento_id = med.fide_medicamento_id;
+
+            DELETE FROM fide_medicamentos_reservados_tb
+            WHERE
+                    fide_paciente_cedula = v_paciente_cedula
+                AND fide_medicamento_id = med.fide_medicamento_id;
+
+        END LOOP;
+
+        FOR sala IN (
+            SELECT
+                c.fide_sala_id,
+                c.fide_cita_id
+            FROM
+                fide_citas_tb c
+            WHERE
+                    c.fide_paciente_cedula = v_paciente_cedula
+                AND c.fide_estado_cita = 'ACTIVA'
+        ) LOOP
+            UPDATE fide_citas_tb
+            SET
+                fide_estado_cita = 'COMPLETADA'
+            WHERE
+                fide_cita_id = sala.fide_cita_id;
+
+        END LOOP;
+
+        dbms_output.put_line('Recursos liberados correctamente.');
+    EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error al liberar recursos: ' || sqlerrm);
+    END fide_actualizar_recursos_proc;
+
+    PROCEDURE fide_anular_factura_proc (
+        p_factura_id NUMBER
+    ) IS
+        v_estado_factura VARCHAR2(20);
+    BEGIN
+        SELECT
+            fide_estado_factura
+        INTO v_estado_factura
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_estado_factura = 'ANULADA' THEN
+            dbms_output.put_line('La factura '
+                                 || p_factura_id
+                                 || ' ya está anulada.');
+            RETURN;
+        END IF;
+
+        UPDATE fide_facturas_tb
+        SET
+            fide_estado_factura = 'ANULADA'
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('Factura '
+                             || p_factura_id
+                             || ' anulada correctamente.');
+        COMMIT;
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('Factura con ID '
+                                 || p_factura_id
+                                 || ' no encontrada.');
+    END;
+
+    PROCEDURE fide_generar_recibo_proc (
+        p_factura_id      NUMBER,
+        p_metodo_pago     VARCHAR2,
+        p_monto_pagado    NUMBER,
+        p_referencia_pago VARCHAR2 := NULL
+    ) IS
+    BEGIN
+        INSERT INTO fide_recibos_tb (
+            fide_factura_id,
+            fide_metodo_pago,
+            fide_monto_pagado,
+            fide_referencia_pago
+        ) VALUES ( p_factura_id,
+                   p_metodo_pago,
+                   p_monto_pagado,
+                   p_referencia_pago );
+
+        dbms_output.put_line('Recibo generado con éxito.');
+    END;
+
+    PROCEDURE fide_calcular_total_factura_proc (
+        p_factura_id NUMBER
+    ) IS
+
+        v_total_medicamentos NUMBER := 0;
+        v_total_salas        NUMBER := 0;
+        v_total_bruto        NUMBER := 0;
+        v_porcentaje_desc    NUMBER := 0;
+        v_total_final        NUMBER := 0;
+    BEGIN
+        SELECT
+            nvl(
+                sum(fide_monto_factura),
+                0
+            )
+        INTO v_total_medicamentos
+        FROM
+            fide_detalles_facturas_tb
+        WHERE
+                fide_factura_id = p_factura_id
+            AND fide_descripcion_factura LIKE 'Medicamento:%';
+
+        SELECT
+            nvl(
+                sum(fide_monto_factura),
+                0
+            )
+        INTO v_total_salas
+        FROM
+            fide_detalles_facturas_tb
+        WHERE
+                fide_factura_id = p_factura_id
+            AND fide_descripcion_factura LIKE 'Uso de sala%';
+
+        v_total_bruto := v_total_medicamentos + v_total_salas;
+        SELECT
+            nvl(fide_porcentaje_aplicado, 0)
+        INTO v_porcentaje_desc
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        v_total_final := v_total_bruto - ( v_total_bruto * v_porcentaje_desc / 100 );
+        UPDATE fide_facturas_tb
+        SET
+            fide_total_factura = v_total_final
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('---- Detalle de factura ID: '
+                             || p_factura_id
+                             || ' ----');
+        dbms_output.put_line('Total Medicamentos: ' || v_total_medicamentos);
+        dbms_output.put_line('Total Salas: ' || v_total_salas);
+        dbms_output.put_line('Descuento aplicado: '
+                             || v_porcentaje_desc
+                             || '%');
+        dbms_output.put_line('Total Final (con descuento): ' || v_total_final);
+    END;
+
+    PROCEDURE fide_aplicar_descuento_proc (
+        p_factura_id       NUMBER,
+        p_codigo_descuento VARCHAR2
+    ) IS
+        v_descuento_id NUMBER;
+        v_porcentaje   NUMBER;
+        v_total        NUMBER;
+        v_nuevo_total  NUMBER;
+    BEGIN
+        SELECT
+            fide_descuento_id,
+            fide_porcentaje_descuento
+        INTO
+            v_descuento_id,
+            v_porcentaje
+        FROM
+            fide_descuentos_tb
+        WHERE
+                fide_codigo_descuento = p_codigo_descuento
+            AND fide_estado = 'ACTIVO'
+            AND fide_fecha_fin > sysdate;
+
+        SELECT
+            fide_total_factura
+        INTO v_total
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        v_nuevo_total := v_total - ( v_total * v_porcentaje / 100 );
+        UPDATE fide_facturas_tb
+        SET
+            fide_total_factura = v_nuevo_total,
+            fide_descuento_id = v_descuento_id,
+            fide_porcentaje_aplicado = v_porcentaje
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('Descuento aplicado ('
+                             || v_porcentaje
+                             || '%). Total actualizado: '
+                             || v_nuevo_total);
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('Descuento no válido o expirado.');
+    END;
+
+END fide_facturacion_pkg;
+/
+
+---15. Paquete de Medicamentos Reservados
+
+--Actualización de tabla Fide_Medicamentos_Reservados_TB para evitar facturas duplicadas
+
+ALTER TABLE fide_medicamentos_reservados_tb ADD fide_estado_reserva VARCHAR2(20) DEFAULT 'ACTIVA';
+
+ALTER TABLE fide_medicamentos_reservados_tb
+    ADD CONSTRAINT chk_estado_reserva
+        CHECK ( fide_estado_reserva IN ( 'ACTIVA', 'COMPLETADA', 'CANCELADA' ) );
+
+CREATE OR REPLACE PACKAGE fide_medicamentos_reservados_pkg AS
+    PROCEDURE fide_reservar_medicamento_proc (
+        p_paciente_cedula      IN VARCHAR2,
+        p_medicamento_id       IN NUMBER,
+        p_cantidad_medicamento IN NUMBER
+    );
+
+    PROCEDURE fide_actualizar_reserva_proc (
+        p_paciente_cedula IN VARCHAR2,
+        p_medicamento_id  IN NUMBER,
+        p_nueva_cantidad  IN NUMBER
+    );
+
+    PROCEDURE fide_eliminar_reserva_proc (
+        p_paciente_cedula IN VARCHAR2,
+        p_medicamento_id  IN NUMBER
+    );
+
+END fide_medicamentos_reservados_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_medicamentos_reservados_pkg AS
+
+    PROCEDURE fide_reservar_medicamento_proc (
+        p_paciente_cedula      IN VARCHAR2,
+        p_medicamento_id       IN NUMBER,
+        p_cantidad_medicamento IN NUMBER
+    ) IS
+        v_existente        NUMBER;
+        v_stock_disponible NUMBER;
+    BEGIN
+        SELECT
+            fide_cantidad_medicamento
+        INTO v_stock_disponible
+        FROM
+            fide_medicamentos_tb
+        WHERE
+            fide_medicamento_id = p_medicamento_id;
+
+        IF p_cantidad_medicamento > v_stock_disponible THEN
+            dbms_output.put_line('Error: No hay suficiente stock disponible. Stock actual: ' || v_stock_disponible);
+            RETURN;
+        END IF;
+
+        SELECT
+            COUNT(*)
+        INTO v_existente
+        FROM
+            fide_medicamentos_reservados_tb
+        WHERE
+                fide_paciente_cedula = p_paciente_cedula
+            AND fide_medicamento_id = p_medicamento_id
+            AND fide_estado_reserva = 'ACTIVA';
+
+        IF v_existente = 0 THEN
+            INSERT INTO fide_medicamentos_reservados_tb (
+                fide_paciente_cedula,
+                fide_medicamento_id,
+                fide_cantidad_medicamento,
+                fide_estado_reserva
+            ) VALUES ( p_paciente_cedula,
+                       p_medicamento_id,
+                       p_cantidad_medicamento,
+                       'ACTIVA' );
+
+            dbms_output.put_line('Medicamento reservado exitosamente.');
+        ELSE
+            dbms_output.put_line('Error: Ya existe una reserva activa para este medicamento y paciente.');
+        END IF;
+
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('Error: El medicamento con ID '
+                                 || p_medicamento_id
+                                 || ' no existe.');
+    END;
+
+    PROCEDURE fide_actualizar_reserva_proc (
+        p_paciente_cedula IN VARCHAR2,
+        p_medicamento_id  IN NUMBER,
+        p_nueva_cantidad  IN NUMBER
+    ) IS
+    BEGIN
+        UPDATE fide_medicamentos_reservados_tb
+        SET
+            fide_cantidad_medicamento = p_nueva_cantidad
+        WHERE
+                fide_paciente_cedula = p_paciente_cedula
+            AND fide_medicamento_id = p_medicamento_id
+            AND fide_estado_reserva = 'ACTIVA';
+
+        dbms_output.put_line('Reserva actualizada correctamente.');
+    EXCEPTION
+        WHEN no_data_found THEN
+            dbms_output.put_line('Error: No existe una reserva activa para actualizar.');
+    END;
+
+    PROCEDURE fide_eliminar_reserva_proc (
+        p_paciente_cedula IN VARCHAR2,
+        p_medicamento_id  IN NUMBER
+    ) IS
+    BEGIN
+        UPDATE fide_medicamentos_reservados_tb
+        SET
+            fide_estado_reserva = 'CANCELADA'
+        WHERE
+                fide_paciente_cedula = p_paciente_cedula
+            AND fide_medicamento_id = p_medicamento_id
+            AND fide_estado_reserva = 'ACTIVA';
+
+        dbms_output.put_line('Reserva cancelada correctamente.');
+    END;
+
+END fide_medicamentos_reservados_pkg;
+/
 
 
 
