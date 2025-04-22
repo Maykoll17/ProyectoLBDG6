@@ -3339,7 +3339,299 @@ CREATE OR REPLACE PACKAGE BODY fide_medicamentos_reservados_pkg AS
 END fide_medicamentos_reservados_pkg;
 /
 
+--16. Paquete de Reportes
 
+CREATE OR REPLACE PACKAGE fide_reportes_pkg AS
+    PROCEDURE fide_generar_reporte_pacientes_proc;
+
+    PROCEDURE fide_generar_reporte_empleados_proc;
+
+    PROCEDURE fide_generar_reporte_citas_proc;
+
+    PROCEDURE fide_generar_reporte_facturacion_proc;
+
+    PROCEDURE fide_generar_reporte_medicamentos_proc;
+
+END fide_reportes_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_reportes_pkg AS
+
+    PROCEDURE fide_generar_reporte_pacientes_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_pacientes_tb
+        ) LOOP
+            dbms_output.put_line('Paciente: ' || r.fide_paciente_cedula);
+        END LOOP;
+    END;
+
+    PROCEDURE fide_generar_reporte_empleados_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_empleados_tb
+        ) LOOP
+            dbms_output.put_line('Empleado: '
+                                 || r.fide_empleado_cedula
+                                 || ' - '
+                                 || r.fide_nombre_empleado
+                                 || ' '
+                                 || r.fide_apellidos_empleado);
+        END LOOP;
+    END;
+
+    PROCEDURE fide_generar_reporte_citas_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                c.fide_cita_id,
+                c.fide_paciente_cedula,
+                c.fide_fecha_cita,
+                c.fide_estado_cita
+            FROM
+                fide_citas_tb c
+        ) LOOP
+            dbms_output.put_line('Cita ID: '
+                                 || r.fide_cita_id
+                                 || ' - Paciente: '
+                                 || r.fide_paciente_cedula
+                                 || ' - Fecha: '
+                                 || r.fide_fecha_cita
+                                 || ' - Estado: '
+                                 || r.fide_estado_cita);
+        END LOOP;
+    END;
+
+    PROCEDURE fide_generar_reporte_facturacion_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                f.fide_factura_id,
+                f.fide_paciente_cedula,
+                f.fide_total_factura,
+                f.fide_estado_factura
+            FROM
+                fide_facturas_tb f
+        ) LOOP
+            dbms_output.put_line('Factura ID: '
+                                 || r.fide_factura_id
+                                 || ' - Paciente: '
+                                 || r.fide_paciente_cedula
+                                 || ' - Total: '
+                                 || r.fide_total_factura
+                                 || ' - Estado: '
+                                 || r.fide_estado_factura);
+        END LOOP;
+    END;
+
+    PROCEDURE fide_generar_reporte_medicamentos_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_medicamentos_tb
+        ) LOOP
+            dbms_output.put_line('Medicamento: '
+                                 || r.fide_nombre_medicamento
+                                 || ' - Cantidad: '
+                                 || r.fide_cantidad_medicamento
+                                 || ' - Precio: '
+                                 || r.fide_precio_medicamento);
+        END LOOP;
+    END;
+
+END fide_reportes_pkg;
+/
+
+---17. Paquete de Dashboard
+
+CREATE OR REPLACE PACKAGE fide_dashboard_pkg AS
+    PROCEDURE fide_obtener_estadisticas_generales_proc;
+
+    PROCEDURE fide_obtener_resumen_citas_proc;
+
+    PROCEDURE fide_obtener_resumen_facturacion_proc;
+
+    PROCEDURE fide_obtener_resumen_medicamentos_proc;
+
+END fide_dashboard_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_dashboard_pkg AS
+
+    PROCEDURE fide_obtener_estadisticas_generales_proc IS
+        v_total_pacientes    NUMBER;
+        v_total_empleados    NUMBER;
+        v_total_facturas     NUMBER;
+        v_total_medicamentos NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_total_pacientes
+        FROM
+            fide_pacientes_tb;
+
+        SELECT
+            COUNT(*)
+        INTO v_total_empleados
+        FROM
+            fide_empleados_tb;
+
+        SELECT
+            COUNT(*)
+        INTO v_total_facturas
+        FROM
+            fide_facturas_tb;
+
+        SELECT
+            COUNT(*)
+        INTO v_total_medicamentos
+        FROM
+            fide_medicamentos_tb;
+
+        dbms_output.put_line('Total Pacientes: ' || v_total_pacientes);
+        dbms_output.put_line('Total Empleados: ' || v_total_empleados);
+        dbms_output.put_line('Total Facturas: ' || v_total_facturas);
+        dbms_output.put_line('Total Medicamentos: ' || v_total_medicamentos);
+    END;
+
+    PROCEDURE fide_obtener_resumen_citas_proc IS
+        v_activas    NUMBER;
+        v_completas  NUMBER;
+        v_canceladas NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_activas
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_estado_cita = 'ACTIVA';
+
+        SELECT
+            COUNT(*)
+        INTO v_completas
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_estado_cita = 'COMPLETADA';
+
+        SELECT
+            COUNT(*)
+        INTO v_canceladas
+        FROM
+            fide_citas_tb
+        WHERE
+            fide_estado_cita = 'CANCELADA';
+
+        dbms_output.put_line('Citas Activas: ' || v_activas);
+        dbms_output.put_line('Citas Completadas: ' || v_completas);
+        dbms_output.put_line('Citas Canceladas: ' || v_canceladas);
+    END;
+
+    PROCEDURE fide_obtener_resumen_facturacion_proc IS
+
+        v_total_monto        NUMBER;
+        v_facturas_pag       NUMBER;
+        v_facturas_pen       NUMBER;
+        v_facturas_anul      NUMBER;
+        v_total_anulado      NUMBER;
+        v_total_facturas     NUMBER;
+        v_porcentaje_anulado NUMBER;
+    BEGIN
+        SELECT
+            nvl(
+                sum(fide_total_factura),
+                0
+            )
+        INTO v_total_monto
+        FROM
+            fide_facturas_tb;
+
+        SELECT
+            COUNT(*)
+        INTO v_facturas_pag
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_estado_factura = 'COBRADO';
+
+        SELECT
+            COUNT(*)
+        INTO v_facturas_pen
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_estado_factura = 'PENDIENTE';
+
+        SELECT
+            COUNT(*)
+        INTO v_facturas_anul
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_estado_factura = 'ANULADA';
+
+        SELECT
+            nvl(
+                sum(fide_total_factura),
+                0
+            )
+        INTO v_total_anulado
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_estado_factura = 'ANULADA';
+
+        SELECT
+            COUNT(*)
+        INTO v_total_facturas
+        FROM
+            fide_facturas_tb;
+
+        IF v_total_facturas > 0 THEN
+            v_porcentaje_anulado := round((v_facturas_anul * 100) / v_total_facturas, 2);
+        ELSE
+            v_porcentaje_anulado := 0;
+        END IF;
+
+        dbms_output.put_line('Monto Total Facturado: ' || v_total_monto);
+        dbms_output.put_line('Facturas Pagadas: ' || v_facturas_pag);
+        dbms_output.put_line('Facturas Pendientes: ' || v_facturas_pen);
+        dbms_output.put_line('Facturas Anuladas: ' || v_facturas_anul);
+        dbms_output.put_line('Monto Total Anulado: ' || v_total_anulado);
+        dbms_output.put_line('Porcentaje de Facturas Anuladas: '
+                             || v_porcentaje_anulado
+                             || '%');
+    END;
+
+    PROCEDURE fide_obtener_resumen_medicamentos_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                fide_nombre_medicamento,
+                fide_cantidad_medicamento
+            FROM
+                fide_medicamentos_tb
+            ORDER BY
+                fide_cantidad_medicamento ASC
+        ) LOOP
+            dbms_output.put_line('Medicamento: '
+                                 || r.fide_nombre_medicamento
+                                 || ' - Stock: '
+                                 || r.fide_cantidad_medicamento);
+        END LOOP;
+    END;
+
+END fide_dashboard_pkg;
+/
 
 
 
