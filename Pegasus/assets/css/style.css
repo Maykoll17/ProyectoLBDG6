@@ -1,0 +1,144 @@
+/**
+ * Estilos personalizados para el Sistema de Gestión Hospitalaria Pegasus
+ */
+
+/* Estilos generales */
+body {
+    background-color: #f8f9fa;
+    color: #212529;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilos del header */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    font-weight: bold;
+    color: white;
+}
+
+/* Tarjetas y contenedores */
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.25rem;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Botones principales */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 500;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+}
+
+/* Tablas */
+.table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Estilos para el panel de dashboard */
+.dashboard-card {
+    transition: transform 0.3s;
+    border-left: 4px solid #0d6efd;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.dashboard-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+/* Estilo para widgets de estadísticas */
+.stats-card {
+    text-align: center;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.stats-card .card-header {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.stats-card .card-body {
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 2rem 1rem;
+}
+
+/* Página de login */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.brand-logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.brand-logo i {
+    font-size: 48px;
+    color: #0d6efd;
+}
+
+/* Paginación */
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Footer */
+footer {
+    margin-top: 50px;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .dashboard-card {
+        margin-bottom: 20px;
+    }
+}
