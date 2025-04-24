@@ -1,363 +1,250 @@
 <?php
 /**
- * Modelo de Pacientes
- * Interactúa con los paquetes FIDE_PACIENTES_PKG, FIDE_PACIENTES_DEUDA_PKG y FIDE_PACIENTES_HOSPITALIZADOS_PKG
+ * Modelo para la gestión de pacientes
  * Sistema de Gestión Hospitalaria Pegasus
+ * Interactúa con los paquetes FIDE_PACIENTES_PKG, FIDE_PACIENTES_DEUDA_PKG y FIDE_PACIENTES_HOSPITALIZADOS_PKG
  */
-
-require_once dirname(__DIR__) . '/includes/Database.php';
 
 /**
- * Obtiene una lista de todos los pacientes
+ * Registra un nuevo paciente en el sistema
  * 
- * @param int $limit Límite de resultados
- * @param int $offset Desplazamiento para paginación
- * @return array Lista de pacientes
+ * @param string $cedula Número de identificación del paciente
+ * @param string $nombre Nombre del paciente
+ * @param string $apellidos Apellidos del paciente
+ * @param string $telefono Teléfono del paciente
+ * @param string $direccion Dirección del paciente
+ * @param string $correo Correo electrónico del paciente
+ * @param int $estado_id ID del estado del paciente
+ * @param float $deuda Deuda inicial del paciente (por defecto 0)
+ * @return bool Éxito o fracaso de la operación
  */
-function obtenerPacientes($limit = 10, $offset = 0) {
+function registrarPaciente($cedula, $nombre, $apellidos, $telefono, $direccion, $correo, $estado_id, $deuda = 0) {
     try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        $query = "SELECT p.FIDE_PACIENTE_CEDULA, p.FIDE_NOMBRE_PACIENTE, p.FIDE_APELLIDOS_PACIENTE, 
-                         p.FIDE_TELEFONO_PACIENTE, p.FIDE_CORREO_PACIENTE, p.FIDE_DEUDA_PACIENTE,
-                         e.FIDE_DESCRIPCION_ESTADO_PACIENTE
-                  FROM FIDE_PACIENTES_TB p
-                  JOIN FIDE_ESTADOS_PACIENTES_TB e ON p.FIDE_ESTADO_PACIENTE_ID = e.FIDE_ESTADO_PACIENTE_ID
-                  ORDER BY p.FIDE_APELLIDOS_PACIENTE, p.FIDE_NOMBRE_PACIENTE
-                  OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY";
-        
-        $pacientes = $db->query($query, [
-            'offset' => $offset,
-            'limit' => $limit
-        ]);
-        
-        $total = $db->queryValue("SELECT COUNT(*) FROM FIDE_PACIENTES_TB");
-        
-        return [
-            'pacientes' => $pacientes,
-            'total' => $total,
-            'paginas' => ceil($total / $limit)
-        ];
-    } catch (Exception $e) {
-        logError("Error en obtenerPacientes: " . $e->getMessage());
-        return [
-            'pacientes' => [],
-            'total' => 0,
-            'paginas' => 0
-        ];
-    }
-}
-
-/**
- * Busca pacientes por criterios
- * 
- * @param string $criterio Criterio de búsqueda (nombre, apellido, cédula, etc.)
- * @param string $valor Valor a buscar
- * @return array Lista de pacientes que coinciden
- */
-function buscarPacientes($criterio, $valor) {
-    try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        $query = "SELECT p.FIDE_PACIENTE_CEDULA, p.FIDE_NOMBRE_PACIENTE, p.FIDE_APELLIDOS_PACIENTE, 
-                         p.FIDE_TELEFONO_PACIENTE, p.FIDE_CORREO_PACIENTE, p.FIDE_DEUDA_PACIENTE,
-                         e.FIDE_DESCRIPCION_ESTADO_PACIENTE
-                  FROM FIDE_PACIENTES_TB p
-                  JOIN FIDE_ESTADOS_PACIENTES_TB e ON p.FIDE_ESTADO_PACIENTE_ID = e.FIDE_ESTADO_PACIENTE_ID
-                  WHERE 1=1";
-        
-        $params = [];
-        
-        // Definir el criterio de búsqueda
-        switch ($criterio) {
-            case 'cedula':
-                $query .= " AND p.FIDE_PACIENTE_CEDULA LIKE :valor";
-                $params['valor'] = '%' . $valor . '%';
-                break;
-            case 'nombre':
-                $query .= " AND UPPER(p.FIDE_NOMBRE_PACIENTE) LIKE UPPER(:valor)";
-                $params['valor'] = '%' . $valor . '%';
-                break;
-            case 'apellido':
-                $query .= " AND UPPER(p.FIDE_APELLIDOS_PACIENTE) LIKE UPPER(:valor)";
-                $params['valor'] = '%' . $valor . '%';
-                break;
-            case 'telefono':
-                $query .= " AND p.FIDE_TELEFONO_PACIENTE LIKE :valor";
-                $params['valor'] = '%' . $valor . '%';
-                break;
-            case 'correo':
-                $query .= " AND UPPER(p.FIDE_CORREO_PACIENTE) LIKE UPPER(:valor)";
-                $params['valor'] = '%' . $valor . '%';
-                break;
-            default:
-                // Búsqueda general en múltiples campos
-                $query .= " AND (
-                    p.FIDE_PACIENTE_CEDULA LIKE :valor OR
-                    UPPER(p.FIDE_NOMBRE_PACIENTE) LIKE UPPER(:valor) OR
-                    UPPER(p.FIDE_APELLIDOS_PACIENTE) LIKE UPPER(:valor) OR
-                    p.FIDE_TELEFONO_PACIENTE LIKE :valor OR
-                    UPPER(p.FIDE_CORREO_PACIENTE) LIKE UPPER(:valor)
-                )";
-                $params['valor'] = '%' . $valor . '%';
+        // Validar datos
+        if (empty($cedula) || empty($nombre) || empty($apellidos)) {
+            showError("Los campos cédula, nombre y apellidos son obligatorios");
+            return false;
         }
         
-        $query .= " ORDER BY p.FIDE_APELLIDOS_PACIENTE, p.FIDE_NOMBRE_PACIENTE";
+        if (!empty($correo) && !isValidEmail($correo)) {
+            showError("El correo electrónico no es válido");
+            return false;
+        }
         
-        $pacientes = $db->query($query, $params);
+        if (!empty($telefono) && !isValidPhone($telefono)) {
+            showError("El número de teléfono no es válido");
+            return false;
+        }
         
-        return $pacientes;
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Preparar parámetros para el procedimiento
+        $params = [
+            'p_cedula' => $cedula,
+            'p_nombre' => $nombre,
+            'p_apellidos' => $apellidos,
+            'p_telefono' => $telefono,
+            'p_direccion' => $direccion,
+            'p_correo' => $correo,
+            'p_estado_id' => $estado_id,
+            'p_deuda' => $deuda
+        ];
+        
+        // Ejecutar el procedimiento almacenado
+        $db->executeProcedure('fide_pacientes_pkg.fide_registrar_paciente_proc', $params);
+        
+        showSuccess("Paciente registrado correctamente");
+        return true;
     } catch (Exception $e) {
-        logError("Error en buscarPacientes: " . $e->getMessage());
-        return [];
+        logError("Error al registrar paciente: " . $e->getMessage());
+        showError("No se pudo registrar el paciente: " . $e->getMessage());
+        return false;
     }
 }
 
 /**
- * Obtiene los datos de un paciente específico
+ * Actualiza los datos de un paciente existente
  * 
- * @param string $cedula Cédula del paciente
- * @return array|null Datos del paciente o null si no existe
+ * @param string $cedula Número de identificación del paciente
+ * @param string $nombre Nombre del paciente
+ * @param string $apellidos Apellidos del paciente
+ * @param string $telefono Teléfono del paciente
+ * @param string $direccion Dirección del paciente
+ * @param string $correo Correo electrónico del paciente
+ * @param int $estado_id ID del estado del paciente
+ * @param float $deuda Deuda inicial del paciente
+ * @return bool Éxito o fracaso de la operación
  */
-function obtenerPaciente($cedula) {
+function actualizarPaciente($cedula, $nombre, $apellidos, $telefono, $direccion, $correo, $estado_id, $deuda) {
     try {
+        // Validar datos
+        if (empty($cedula) || empty($nombre) || empty($apellidos)) {
+            showError("Los campos cédula, nombre y apellidos son obligatorios");
+            return false;
+        }
+        
+        if (!empty($correo) && !isValidEmail($correo)) {
+            showError("El correo electrónico no es válido");
+            return false;
+        }
+        
+        if (!empty($telefono) && !isValidPhone($telefono)) {
+            showError("El número de teléfono no es válido");
+            return false;
+        }
+        
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        $query = "SELECT p.FIDE_PACIENTE_CEDULA, p.FIDE_NOMBRE_PACIENTE, p.FIDE_APELLIDOS_PACIENTE, 
-                         p.FIDE_TELEFONO_PACIENTE, p.FIDE_CORREO_PACIENTE, p.FIDE_DIRECCION_PACIENTE,
-                         p.FIDE_DEUDA_PACIENTE, p.FIDE_ESTADO_PACIENTE_ID,
-                         e.FIDE_DESCRIPCION_ESTADO_PACIENTE
-                  FROM FIDE_PACIENTES_TB p
-                  JOIN FIDE_ESTADOS_PACIENTES_TB e ON p.FIDE_ESTADO_PACIENTE_ID = e.FIDE_ESTADO_PACIENTE_ID
-                  WHERE p.FIDE_PACIENTE_CEDULA = :cedula";
+        // Preparar parámetros para el procedimiento
+        $params = [
+            'p_cedula' => $cedula,
+            'p_nombre' => $nombre,
+            'p_apellidos' => $apellidos,
+            'p_telefono' => $telefono,
+            'p_direccion' => $direccion,
+            'p_correo' => $correo,
+            'p_estado_id' => $estado_id,
+            'p_deuda' => $deuda
+        ];
         
-        return $db->queryOne($query, ['cedula' => $cedula]);
+        // Ejecutar el procedimiento almacenado
+        $db->executeProcedure('fide_pacientes_pkg.fide_actualizar_paciente_proc', $params);
+        
+        showSuccess("Paciente actualizado correctamente");
+        return true;
     } catch (Exception $e) {
-        logError("Error en obtenerPaciente: " . $e->getMessage());
+        logError("Error al actualizar paciente: " . $e->getMessage());
+        showError("No se pudo actualizar el paciente: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Busca un paciente por su número de cédula
+ * 
+ * @param string $cedula Número de identificación del paciente
+ * @return array|null Datos del paciente o null si no se encuentra
+ */
+function buscarPaciente($cedula) {
+    try {
+        if (empty($cedula)) {
+            showError("El número de cédula es obligatorio");
+            return null;
+        }
+        
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Consulta SQL para obtener los datos del paciente
+        $query = "SELECT 
+                    p.FIDE_PACIENTE_CEDULA, 
+                    p.FIDE_NOMBRE_PACIENTE, 
+                    p.FIDE_APELLIDOS_PACIENTE, 
+                    p.FIDE_TELEFONO_PACIENTE, 
+                    p.FIDE_DIRECCION_PACIENTE, 
+                    p.FIDE_CORREO_PACIENTE, 
+                    p.FIDE_ESTADO_PACIENTE_ID, 
+                    p.FIDE_DEUDA_PACIENTE,
+                    e.FIDE_DESCRIPCION_ESTADO_PACIENTE
+                FROM 
+                    FIDE_PACIENTES_TB p
+                JOIN 
+                    FIDE_ESTADOS_PACIENTES_TB e ON p.FIDE_ESTADO_PACIENTE_ID = e.FIDE_ESTADO_PACIENTE_ID
+                WHERE 
+                    p.FIDE_PACIENTE_CEDULA = :cedula";
+        
+        // Ejecutar la consulta
+        $result = $db->queryOne($query, ['cedula' => $cedula]);
+        
+        if (!$result) {
+            showInfo("No se encontró ningún paciente con la cédula: $cedula");
+            return null;
+        }
+        
+        return $result;
+    } catch (Exception $e) {
+        logError("Error al buscar paciente: " . $e->getMessage());
+        showError("No se pudo buscar el paciente: " . $e->getMessage());
         return null;
     }
 }
 
 /**
- * Obtiene una lista de todos los estados de pacientes
+ * Elimina un paciente del sistema
  * 
- * @return array Lista de estados
- */
-function obtenerEstadosPacientes() {
-    try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        $query = "SELECT FIDE_ESTADO_PACIENTE_ID, FIDE_DESCRIPCION_ESTADO_PACIENTE
-                  FROM FIDE_ESTADOS_PACIENTES_TB
-                  ORDER BY FIDE_DESCRIPCION_ESTADO_PACIENTE";
-        
-        return $db->query($query);
-    } catch (Exception $e) {
-        logError("Error en obtenerEstadosPacientes: " . $e->getMessage());
-        return [];
-    }
-}
-
-/**
- * Inserta un nuevo paciente en la base de datos
- * 
- * @param array $paciente Datos del paciente
- * @return array Resultado de la operación
- */
-function insertarPaciente($paciente) {
-    try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        // Verificar si ya existe un paciente con la misma cédula
-        $existe = $db->queryValue("SELECT COUNT(*) FROM FIDE_PACIENTES_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                ['cedula' => $paciente['cedula']]);
-        
-        if ($existe > 0) {
-            return [
-                'success' => false,
-                'message' => 'Ya existe un paciente con esta cédula.'
-            ];
-        }
-        
-        // Ejecutar la inserción
-        $db->query("INSERT INTO FIDE_PACIENTES_TB (
-                      FIDE_PACIENTE_CEDULA, FIDE_NOMBRE_PACIENTE, FIDE_APELLIDOS_PACIENTE,
-                      FIDE_TELEFONO_PACIENTE, FIDE_DIRECCION_PACIENTE, FIDE_CORREO_PACIENTE,
-                      FIDE_ESTADO_PACIENTE_ID, FIDE_DEUDA_PACIENTE
-                  ) VALUES (
-                      :cedula, :nombre, :apellidos, :telefono, :direccion, :correo, :estado_id, 0
-                  )", [
-                      'cedula' => $paciente['cedula'],
-                      'nombre' => $paciente['nombre'],
-                      'apellidos' => $paciente['apellidos'],
-                      'telefono' => $paciente['telefono'],
-                      'direccion' => $paciente['direccion'],
-                      'correo' => $paciente['correo'],
-                      'estado_id' => $paciente['estado_id']
-                  ]);
-        
-        return [
-            'success' => true,
-            'message' => 'Paciente registrado correctamente.'
-        ];
-    } catch (Exception $e) {
-        logError("Error en insertarPaciente: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al registrar el paciente: ' . $e->getMessage()
-        ];
-    }
-}
-
-/**
- * Actualiza los datos de un paciente
- * 
- * @param array $paciente Datos del paciente
- * @return array Resultado de la operación
- */
-function actualizarPaciente($paciente) {
-    try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        // Verificar si existe el paciente
-        $existe = $db->queryValue("SELECT COUNT(*) FROM FIDE_PACIENTES_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                ['cedula' => $paciente['cedula']]);
-        
-        if ($existe == 0) {
-            return [
-                'success' => false,
-                'message' => 'No existe un paciente con esta cédula.'
-            ];
-        }
-        
-        // Ejecutar la actualización
-        $db->query("UPDATE FIDE_PACIENTES_TB SET 
-                      FIDE_NOMBRE_PACIENTE = :nombre,
-                      FIDE_APELLIDOS_PACIENTE = :apellidos,
-                      FIDE_TELEFONO_PACIENTE = :telefono,
-                      FIDE_DIRECCION_PACIENTE = :direccion,
-                      FIDE_CORREO_PACIENTE = :correo,
-                      FIDE_ESTADO_PACIENTE_ID = :estado_id
-                  WHERE FIDE_PACIENTE_CEDULA = :cedula", [
-                      'cedula' => $paciente['cedula'],
-                      'nombre' => $paciente['nombre'],
-                      'apellidos' => $paciente['apellidos'],
-                      'telefono' => $paciente['telefono'],
-                      'direccion' => $paciente['direccion'],
-                      'correo' => $paciente['correo'],
-                      'estado_id' => $paciente['estado_id']
-                  ]);
-        
-        return [
-            'success' => true,
-            'message' => 'Paciente actualizado correctamente.'
-        ];
-    } catch (Exception $e) {
-        logError("Error en actualizarPaciente: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al actualizar el paciente: ' . $e->getMessage()
-        ];
-    }
-}
-
-/**
- * Elimina un paciente (solo si no tiene historial médico, citas, etc.)
- * 
- * @param string $cedula Cédula del paciente
- * @return array Resultado de la operación
+ * @param string $cedula Número de identificación del paciente
+ * @return bool Éxito o fracaso de la operación
  */
 function eliminarPaciente($cedula) {
     try {
+        if (empty($cedula)) {
+            showError("El número de cédula es obligatorio");
+            return false;
+        }
+        
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        // Comprobar si el paciente tiene historial, citas, facturas, etc.
-        $tieneHistorial = $db->queryValue("SELECT COUNT(*) FROM FIDE_HISTORIAL_MEDICO_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                        ['cedula' => $cedula]);
+        // Ejecutar el procedimiento almacenado
+        $db->executeProcedure('fide_pacientes_pkg.fide_eliminar_paciente_proc', ['p_cedula' => $cedula]);
         
-        if ($tieneHistorial > 0) {
-            return [
-                'success' => false,
-                'message' => 'No se puede eliminar el paciente porque tiene historial médico asociado.'
-            ];
-        }
-        
-        $tieneCitas = $db->queryValue("SELECT COUNT(*) FROM FIDE_CITAS_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                    ['cedula' => $cedula]);
-        
-        if ($tieneCitas > 0) {
-            return [
-                'success' => false,
-                'message' => 'No se puede eliminar el paciente porque tiene citas asociadas.'
-            ];
-        }
-        
-        $tieneFacturas = $db->queryValue("SELECT COUNT(*) FROM FIDE_FACTURAS_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                       ['cedula' => $cedula]);
-        
-        if ($tieneFacturas > 0) {
-            return [
-                'success' => false,
-                'message' => 'No se puede eliminar el paciente porque tiene facturas asociadas.'
-            ];
-        }
-        
-        $tieneHospitalizaciones = $db->queryValue("SELECT COUNT(*) FROM FIDE_HOSPITALIZACIONES_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                                                ['cedula' => $cedula]);
-        
-        if ($tieneHospitalizaciones > 0) {
-            return [
-                'success' => false,
-                'message' => 'No se puede eliminar el paciente porque tiene hospitalizaciones asociadas.'
-            ];
-        }
-        
-        // Si no tiene relaciones, eliminarlo
-        $db->query("DELETE FROM FIDE_PACIENTES_TB WHERE FIDE_PACIENTE_CEDULA = :cedula", 
-                  ['cedula' => $cedula]);
-        
-        return [
-            'success' => true,
-            'message' => 'Paciente eliminado correctamente.'
-        ];
+        showSuccess("Paciente eliminado correctamente");
+        return true;
     } catch (Exception $e) {
-        logError("Error en eliminarPaciente: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al eliminar el paciente: ' . $e->getMessage()
-        ];
+        logError("Error al eliminar paciente: " . $e->getMessage());
+        showError("No se pudo eliminar el paciente: " . $e->getMessage());
+        return false;
     }
 }
 
 /**
  * Obtiene el historial médico de un paciente
  * 
- * @param string $cedula Cédula del paciente
+ * @param string $cedula Número de identificación del paciente
  * @return array Historial médico del paciente
  */
 function obtenerHistorialMedico($cedula) {
     try {
+        if (empty($cedula)) {
+            showError("El número de cédula es obligatorio");
+            return [];
+        }
+        
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        $query = "SELECT h.FIDE_HISTORIAL_ID, h.FIDE_FECHA_REGISTRO, 
-                         h.FIDE_DIAGNOSTICO, h.FIDE_TRATAMIENTO, h.FIDE_OBSERVACIONES,
-                         e.FIDE_NOMBRE_EMPLEADO || ' ' || e.FIDE_APELLIDOS_EMPLEADO AS NOMBRE_DOCTOR
-                  FROM FIDE_HISTORIAL_MEDICO_TB h
-                  JOIN FIDE_EMPLEADOS_TB e ON h.FIDE_EMPLEADO_CEDULA = e.FIDE_EMPLEADO_CEDULA
-                  WHERE h.FIDE_PACIENTE_CEDULA = :cedula
-                  ORDER BY h.FIDE_FECHA_REGISTRO DESC";
+        // Consulta SQL para obtener el historial médico
+        $query = "SELECT 
+                    hm.FIDE_HISTORIAL_ID,
+                    hm.FIDE_FECHA_REGISTRO,
+                    hm.FIDE_DIAGNOSTICO,
+                    hm.FIDE_TRATAMIENTO,
+                    hm.FIDE_OBSERVACIONES,
+                    e.FIDE_NOMBRE_EMPLEADO,
+                    e.FIDE_APELLIDOS_EMPLEADO
+                FROM 
+                    FIDE_HISTORIAL_MEDICO_TB hm
+                JOIN 
+                    FIDE_EMPLEADOS_TB e ON hm.FIDE_EMPLEADO_CEDULA = e.FIDE_EMPLEADO_CEDULA
+                WHERE 
+                    hm.FIDE_PACIENTE_CEDULA = :cedula
+                ORDER BY 
+                    hm.FIDE_FECHA_REGISTRO DESC";
         
-        return $db->query($query, ['cedula' => $cedula]);
+        // Ejecutar la consulta
+        $result = $db->query($query, ['cedula' => $cedula]);
+        
+        return $result;
     } catch (Exception $e) {
-        logError("Error en obtenerHistorialMedico: " . $e->getMessage());
+        logError("Error al obtener historial médico: " . $e->getMessage());
+        showError("No se pudo obtener el historial médico: " . $e->getMessage());
         return [];
     }
 }
@@ -365,70 +252,89 @@ function obtenerHistorialMedico($cedula) {
 /**
  * Registra una nueva entrada en el historial médico de un paciente
  * 
- * @param array $historial Datos del historial
- * @return array Resultado de la operación
+ * @param string $cedula_paciente Número de identificación del paciente
+ * @param string $cedula_empleado Número de identificación del empleado (médico)
+ * @param string $diagnostico Diagnóstico médico
+ * @param string $tratamiento Tratamiento prescrito
+ * @param string $observaciones Observaciones adicionales
+ * @return bool Éxito o fracaso de la operación
  */
-function registrarHistorialMedico($historial) {
+function registrarHistorialMedico($cedula_paciente, $cedula_empleado, $diagnostico, $tratamiento, $observaciones) {
     try {
+        // Validar datos
+        if (empty($cedula_paciente) || empty($cedula_empleado) || empty($diagnostico)) {
+            showError("Los campos cédula del paciente, cédula del empleado y diagnóstico son obligatorios");
+            return false;
+        }
+        
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        // Ejecutar la inserción
-        $db->query("INSERT INTO FIDE_HISTORIAL_MEDICO_TB (
-                      FIDE_PACIENTE_CEDULA, FIDE_EMPLEADO_CEDULA, FIDE_FECHA_REGISTRO,
-                      FIDE_DIAGNOSTICO, FIDE_TRATAMIENTO, FIDE_OBSERVACIONES
-                  ) VALUES (
-                      :paciente_cedula, :empleado_cedula, SYSTIMESTAMP,
-                      :diagnostico, :tratamiento, :observaciones
-                  )", [
-                      'paciente_cedula' => $historial['paciente_cedula'],
-                      'empleado_cedula' => $historial['empleado_cedula'],
-                      'diagnostico' => $historial['diagnostico'],
-                      'tratamiento' => $historial['tratamiento'],
-                      'observaciones' => $historial['observaciones']
-                  ]);
+        // Preparar parámetros para el procedimiento
+        $params = [
+            'p_cedula_paciente' => $cedula_paciente,
+            'p_cedula_empleado' => $cedula_empleado,
+            'p_diagnostico' => $diagnostico,
+            'p_tratamiento' => $tratamiento,
+            'p_observaciones' => $observaciones
+        ];
         
-        return [
-            'success' => true,
-            'message' => 'Historial médico registrado correctamente.'
-        ];
+        // Ejecutar el procedimiento almacenado
+        $db->executeProcedure('fide_pacientes_pkg.fide_registrar_historial_medico_proc', $params);
+        
+        showSuccess("Historial médico registrado correctamente");
+        return true;
     } catch (Exception $e) {
-        logError("Error en registrarHistorialMedico: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al registrar el historial médico: ' . $e->getMessage()
-        ];
+        logError("Error al registrar historial médico: " . $e->getMessage());
+        showError("No se pudo registrar el historial médico: " . $e->getMessage());
+        return false;
     }
 }
 
 /**
- * Obtiene los pacientes con deuda
+ * Obtiene la lista de pacientes con deuda
  * 
- * @param float $deudaMinima Deuda mínima para filtrar
  * @return array Lista de pacientes con deuda
  */
-function obtenerPacientesConDeuda($deudaMinima = 0) {
+function obtenerPacientesConDeuda() {
     try {
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        $query = "SELECT p.FIDE_PACIENTE_CEDULA, p.FIDE_NOMBRE_PACIENTE, p.FIDE_APELLIDOS_PACIENTE, 
-                         p.FIDE_TELEFONO_PACIENTE, p.FIDE_CORREO_PACIENTE, p.FIDE_DEUDA_PACIENTE,
-                         e.FIDE_DESCRIPCION_ESTADO_PACIENTE
-                  FROM FIDE_PACIENTES_TB p
-                  JOIN FIDE_ESTADOS_PACIENTES_TB e ON p.FIDE_ESTADO_PACIENTE_ID = e.FIDE_ESTADO_PACIENTE_ID
-                  WHERE p.FIDE_DEUDA_PACIENTE > :deuda_minima
-                  ORDER BY p.FIDE_DEUDA_PACIENTE DESC";
+        // Consulta SQL para obtener los pacientes con deuda
+        $query = "SELECT 
+                    p.FIDE_PACIENTE_CEDULA, 
+                    p.FIDE_NOMBRE_PACIENTE,
+                    p.FIDE_APELLIDOS_PACIENTE,
+                    p.FIDE_TELEFONO_PACIENTE,
+                    p.FIDE_CORREO_PACIENTE,
+                    ep.FIDE_DESCRIPCION_ESTADO_PACIENTE, 
+                    p.FIDE_DEUDA_PACIENTE,
+                    (SELECT COUNT(*) FROM FIDE_FACTURAS_TB f WHERE f.FIDE_PACIENTE_CEDULA = p.FIDE_PACIENTE_CEDULA AND f.FIDE_ESTADO_FACTURA = 'PENDIENTE') AS facturas_pendientes
+                FROM 
+                    FIDE_PACIENTES_TB p
+                JOIN 
+                    FIDE_ESTADOS_PACIENTES_TB ep ON p.FIDE_ESTADO_PACIENTE_ID = ep.FIDE_ESTADO_PACIENTE_ID
+                WHERE 
+                    p.FIDE_DEUDA_PACIENTE > 0
+                ORDER BY 
+                    p.FIDE_DEUDA_PACIENTE DESC";
         
-        return $db->query($query, ['deuda_minima' => $deudaMinima]);
+        // Ejecutar la consulta
+        $result = $db->query($query);
+        
+        return $result;
     } catch (Exception $e) {
-        logError("Error en obtenerPacientesConDeuda: " . $e->getMessage());
+        logError("Error al obtener pacientes con deuda: " . $e->getMessage());
+        showError("No se pudo obtener la lista de pacientes con deuda: " . $e->getMessage());
         return [];
     }
 }
 
 /**
- * Obtiene los pacientes hospitalizados
+ * Obtiene la lista de pacientes hospitalizados
  * 
  * @return array Lista de pacientes hospitalizados
  */
@@ -436,23 +342,195 @@ function obtenerPacientesHospitalizados() {
     try {
         global $db_config;
         $db = Database::getInstance($db_config);
-        
-        $query = "SELECT h.FIDE_HOSPITALIZACION_ID, h.FIDE_FECHA_INGRESO, h.FIDE_MOTIVO_INGRESO,
-                         h.FIDE_DIAGNOSTICO_INGRESO, h.FIDE_ESTADO,
-                         p.FIDE_PACIENTE_CEDULA, p.FIDE_NOMBRE_PACIENTE, p.FIDE_APELLIDOS_PACIENTE, 
-                         p.FIDE_TELEFONO_PACIENTE,
-                         s.FIDE_SALA_ID,
-                         e.FIDE_NOMBRE_EMPLEADO || ' ' || e.FIDE_APELLIDOS_EMPLEADO AS NOMBRE_DOCTOR
-                  FROM FIDE_HOSPITALIZACIONES_TB h
-                  JOIN FIDE_PACIENTES_TB p ON h.FIDE_PACIENTE_CEDULA = p.FIDE_PACIENTE_CEDULA
-                  JOIN FIDE_SALAS_TB s ON h.FIDE_SALA_ID = s.FIDE_SALA_ID
-                  JOIN FIDE_EMPLEADOS_TB e ON h.FIDE_EMPLEADO_CEDULA = e.FIDE_EMPLEADO_CEDULA
-                  WHERE h.FIDE_ESTADO = 'ACTIVO'
-                  ORDER BY h.FIDE_FECHA_INGRESO DESC";
-        
-        return $db->query($query);
+        $conn = $db->getConnection(); // ← conexión OCI
+
+        $stmt = oci_parse($conn, "BEGIN FIDE_PACIENTES_HOSPITALIZADOS_PKG.FIDE_LISTAR_PACIENTES_HOSPITALIZADOS_PROC(:cursor); END;");
+        $cursor = oci_new_cursor($conn);
+        oci_bind_by_name($stmt, ":cursor", $cursor, -1, OCI_B_CURSOR);
+
+        oci_execute($stmt);      // Ejecuta el bloque PL/SQL
+        oci_execute($cursor);    // Ejecuta el cursor para lectura
+
+        $result = [];
+        while (($row = oci_fetch_assoc($cursor)) != false) {
+            $result[] = $row;
+        }
+
+        oci_free_statement($stmt);
+        oci_free_statement($cursor);
+
+        return $result;
     } catch (Exception $e) {
-        logError("Error en obtenerPacientesHospitalizados: " . $e->getMessage());
+        logError("Error al obtener pacientes hospitalizados: " . $e->getMessage());
+        showError("No se pudo obtener la lista de pacientes hospitalizados.");
+        return [];
+    }
+}
+
+/**
+ * Obtiene la lista de empleados activos
+ * 
+ * @return array Lista de empleados activos
+ */
+function obtenerEmpleadosActivos() {
+    try {
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        $conn = $db->getConnection();
+        
+        // Crear un cursor para recibir los resultados
+        $cursor = oci_new_cursor($conn);
+        
+        // Preparar y ejecutar el procedimiento almacenado
+        $sql = "BEGIN FIDE_EMPLEADOS_ACTIVOS_PKG.FIDE_LISTAR_EMPLEADOS_ACTIVOS_PROC(:p_cursor); END;";
+        $stmt = oci_parse($conn, $sql);
+        
+        // Bind de parámetros
+        oci_bind_by_name($stmt, ":p_cursor", $cursor, -1, OCI_B_CURSOR);
+        
+        // Ejecutar el procedimiento
+        oci_execute($stmt);
+        oci_execute($cursor);
+        
+        // Recopilar los resultados
+        $empleados = [];
+        while ($row = oci_fetch_assoc($cursor)) {
+            $empleados[] = $row;
+        }
+        
+        // Liberar recursos
+        oci_free_statement($cursor);
+        oci_free_statement($stmt);
+        
+        return $empleados;
+    } catch (Exception $e) {
+        logError("Error al obtener empleados activos: " . $e->getMessage());
+        showError("No se pudo obtener la lista de empleados activos: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Obtiene el historial de hospitalizaciones de un paciente
+ * 
+ * @param string $cedula Número de identificación del paciente
+ * @return array Historial de hospitalizaciones
+ */
+function obtenerHistorialHospitalizaciones($cedula) {
+    try {
+        if (empty($cedula)) {
+            showError("El número de cédula es obligatorio");
+            return [];
+        }
+        
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Consulta SQL para obtener el historial de hospitalizaciones
+        $query = "SELECT 
+                    h.FIDE_HOSPITALIZACION_ID, 
+                    h.FIDE_SALA_ID, 
+                    ts.FIDE_DESCRIPCION_TIPO_SALA, 
+                    h.FIDE_EMPLEADO_CEDULA, 
+                    e.FIDE_NOMBRE_EMPLEADO, 
+                    e.FIDE_APELLIDOS_EMPLEADO, 
+                    h.FIDE_FECHA_INGRESO, 
+                    h.FIDE_FECHA_ALTA, 
+                    h.FIDE_MOTIVO_INGRESO, 
+                    h.FIDE_DIAGNOSTICO_INGRESO, 
+                    h.FIDE_ESTADO 
+                FROM 
+                    FIDE_HOSPITALIZACIONES_TB h 
+                JOIN 
+                    FIDE_EMPLEADOS_TB e ON h.FIDE_EMPLEADO_CEDULA = e.FIDE_EMPLEADO_CEDULA 
+                JOIN 
+                    FIDE_SALAS_TB s ON h.FIDE_SALA_ID = s.FIDE_SALA_ID 
+                JOIN 
+                    FIDE_TIPOS_SALAS_TB ts ON s.FIDE_TIPO_SALA_ID = ts.FIDE_TIPO_SALA_ID 
+                WHERE 
+                    h.FIDE_PACIENTE_CEDULA = :cedula 
+                ORDER BY 
+                    h.FIDE_FECHA_INGRESO DESC";
+        
+        // Ejecutar la consulta
+        $result = $db->query($query, ['cedula' => $cedula]);
+        
+        return $result;
+    } catch (Exception $e) {
+        logError("Error al obtener historial de hospitalizaciones: " . $e->getMessage());
+        showError("No se pudo obtener el historial de hospitalizaciones: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Obtiene la lista de todos los pacientes
+ * 
+ * @return array Lista de pacientes
+ */
+function obtenerTodosPacientes() {
+    try {
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Consulta SQL para obtener todos los pacientes
+        $query = "SELECT 
+                    p.FIDE_PACIENTE_CEDULA, 
+                    p.FIDE_NOMBRE_PACIENTE, 
+                    p.FIDE_APELLIDOS_PACIENTE, 
+                    p.FIDE_TELEFONO_PACIENTE, 
+                    p.FIDE_DIRECCION_PACIENTE, 
+                    p.FIDE_CORREO_PACIENTE, 
+                    ep.FIDE_DESCRIPCION_ESTADO_PACIENTE, 
+                    p.FIDE_DEUDA_PACIENTE
+                FROM 
+                    FIDE_PACIENTES_TB p
+                JOIN 
+                    FIDE_ESTADOS_PACIENTES_TB ep ON p.FIDE_ESTADO_PACIENTE_ID = ep.FIDE_ESTADO_PACIENTE_ID
+                ORDER BY 
+                    p.FIDE_APELLIDOS_PACIENTE, p.FIDE_NOMBRE_PACIENTE";
+        
+        // Ejecutar la consulta
+        $result = $db->query($query);
+        
+        return $result;
+    } catch (Exception $e) {
+        logError("Error al obtener todos los pacientes: " . $e->getMessage());
+        showError("No se pudo obtener la lista de pacientes: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Obtiene la lista de estados de pacientes
+ * 
+ * @return array Lista de estados de pacientes
+ */
+function obtenerEstadosPacientes() {
+    try {
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Consulta SQL para obtener los estados de pacientes
+        $query = "SELECT 
+                    FIDE_ESTADO_PACIENTE_ID, 
+                    FIDE_DESCRIPCION_ESTADO_PACIENTE
+                FROM 
+                    FIDE_ESTADOS_PACIENTES_TB
+                ORDER BY 
+                    FIDE_DESCRIPCION_ESTADO_PACIENTE";
+        
+        // Ejecutar la consulta
+        $result = $db->query($query);
+        
+        return $result;
+    } catch (Exception $e) {
+        logError("Error al obtener estados de pacientes: " . $e->getMessage());
+        showError("No se pudo obtener la lista de estados de pacientes: " . $e->getMessage());
         return [];
     }
 }
@@ -460,154 +538,52 @@ function obtenerPacientesHospitalizados() {
 /**
  * Registra una nueva hospitalización
  * 
- * @param array $hospitalizacion Datos de la hospitalización
- * @return array Resultado de la operación
+ * @param string $cedula_paciente Cédula del paciente
+ * @param int $sala_id ID de la sala
+ * @param string $cedula_medico Cédula del médico responsable
+ * @param string $motivo Motivo de la hospitalización
+ * @param string $diagnostico Diagnóstico inicial
+ * @return bool Éxito o fracaso de la operación
  */
-function registrarHospitalizacion($hospitalizacion) {
+function registrarHospitalizacion($cedula_paciente, $sala_id, $cedula_medico, $motivo, $diagnostico) {
     try {
+        // Validar datos
+        if (empty($cedula_paciente) || empty($cedula_medico) || empty($motivo) || $sala_id <= 0) {
+            showError("Los campos cédula del paciente, cédula del médico, sala y motivo son obligatorios");
+            return false;
+        }
+        
+        // Obtener la conexión a la base de datos
         global $db_config;
         $db = Database::getInstance($db_config);
         
-        // Verificar disponibilidad de la sala
-        $salaDisponible = $db->queryValue("
-            SELECT COUNT(*) FROM FIDE_SALAS_TB 
-            WHERE FIDE_SALA_ID = :sala_id 
-            AND FIDE_ESTADO_SALA_ID = (
-                SELECT FIDE_ESTADO_SALA_ID FROM FIDE_ESTADOS_SALAS_TB 
-                WHERE FIDE_DESCRIPCION_ESTADO_SALA = 'DISPONIBLE'
-            )", ['sala_id' => $hospitalizacion['sala_id']]
-        );
+        // Preparar la llamada al procedimiento
+        $sql = "BEGIN FIDE_PACIENTES_HOSPITALIZADOS_PKG.FIDE_REGISTRAR_HOSPITALIZACION_PROC(:p_cedula_paciente, :p_sala_id, :p_cedula_medico, :p_motivo, :p_diagnostico); END;";
+        $stmt = oci_parse($db->getConnection(), $sql);
         
-        if ($salaDisponible == 0) {
-            return [
-                'success' => false,
-                'message' => 'La sala seleccionada no está disponible.'
-            ];
+        // Asociar los parámetros
+        oci_bind_by_name($stmt, ":p_cedula_paciente", $cedula_paciente);
+        oci_bind_by_name($stmt, ":p_sala_id", $sala_id);
+        oci_bind_by_name($stmt, ":p_cedula_medico", $cedula_medico);
+        oci_bind_by_name($stmt, ":p_motivo", $motivo);
+        oci_bind_by_name($stmt, ":p_diagnostico", $diagnostico);
+        
+        // Ejecutar el procedimiento
+        $result = oci_execute($stmt);
+        
+        // Liberar recursos
+        oci_free_statement($stmt);
+        
+        if (!$result) {
+            $error = oci_error($stmt);
+            throw new Exception($error['message']);
         }
         
-        // Iniciar transacción
-        $db->beginTransaction();
-        
-        // Insertar hospitalización
-        $db->query("INSERT INTO FIDE_HOSPITALIZACIONES_TB (
-                      FIDE_PACIENTE_CEDULA, FIDE_SALA_ID, FIDE_EMPLEADO_CEDULA,
-                      FIDE_FECHA_INGRESO, FIDE_MOTIVO_INGRESO, FIDE_DIAGNOSTICO_INGRESO,
-                      FIDE_ESTADO
-                  ) VALUES (
-                      :paciente_cedula, :sala_id, :empleado_cedula,
-                      SYSTIMESTAMP, :motivo_ingreso, :diagnostico_ingreso,
-                      'ACTIVO'
-                  )", [
-                      'paciente_cedula' => $hospitalizacion['paciente_cedula'],
-                      'sala_id' => $hospitalizacion['sala_id'],
-                      'empleado_cedula' => $hospitalizacion['empleado_cedula'],
-                      'motivo_ingreso' => $hospitalizacion['motivo_ingreso'],
-                      'diagnostico_ingreso' => $hospitalizacion['diagnostico_ingreso']
-                  ]);
-        
-        // Actualizar estado de la sala
-        $estadoOcupado = $db->queryValue("
-            SELECT FIDE_ESTADO_SALA_ID FROM FIDE_ESTADOS_SALAS_TB 
-            WHERE FIDE_DESCRIPCION_ESTADO_SALA = 'OCUPADO'
-        ");
-        
-        $db->query("UPDATE FIDE_SALAS_TB SET FIDE_ESTADO_SALA_ID = :estado_id WHERE FIDE_SALA_ID = :sala_id", [
-            'estado_id' => $estadoOcupado,
-            'sala_id' => $hospitalizacion['sala_id']
-        ]);
-        
-        // Confirmar transacción
-        $db->commit();
-        
-        return [
-            'success' => true,
-            'message' => 'Hospitalización registrada correctamente.'
-        ];
+        showSuccess("Hospitalización registrada correctamente");
+        return true;
     } catch (Exception $e) {
-        // Revertir cambios en caso de error
-        $db->rollback();
-        
-        logError("Error en registrarHospitalizacion: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al registrar la hospitalización: ' . $e->getMessage()
-        ];
-    }
-}
-
-/**
- * Registra el alta de un paciente hospitalizado
- * 
- * @param int $hospitalizacionId ID de la hospitalización
- * @param string $observaciones Observaciones del alta
- * @return array Resultado de la operación
- */
-function registrarAltaHospitalizacion($hospitalizacionId, $observaciones) {
-    try {
-        global $db_config;
-        $db = Database::getInstance($db_config);
-        
-        // Obtener datos de la hospitalización
-        $hospitalizacion = $db->queryOne("
-            SELECT FIDE_SALA_ID, FIDE_PACIENTE_CEDULA, FIDE_ESTADO
-            FROM FIDE_HOSPITALIZACIONES_TB
-            WHERE FIDE_HOSPITALIZACION_ID = :id
-        ", ['id' => $hospitalizacionId]);
-        
-        if (!$hospitalizacion) {
-            return [
-                'success' => false,
-                'message' => 'No se encontró la hospitalización especificada.'
-            ];
-        }
-        
-        if ($hospitalizacion['FIDE_ESTADO'] !== 'ACTIVO') {
-            return [
-                'success' => false,
-                'message' => 'La hospitalización ya ha sido dada de alta.'
-            ];
-        }
-        
-        // Iniciar transacción
-        $db->beginTransaction();
-        
-        // Actualizar hospitalización
-        $db->query("UPDATE FIDE_HOSPITALIZACIONES_TB SET
-                      FIDE_FECHA_ALTA = SYSTIMESTAMP,
-                      FIDE_ESTADO = 'FINALIZADO',
-                      FIDE_OBSERVACIONES = :observaciones
-                  WHERE FIDE_HOSPITALIZACION_ID = :id", 
-                  [
-                      'observaciones' => $observaciones,
-                      'id' => $hospitalizacionId
-                  ]);
-        
-        // Actualizar estado de la sala
-        $estadoDisponible = $db->queryValue("
-            SELECT FIDE_ESTADO_SALA_ID FROM FIDE_ESTADOS_SALAS_TB 
-            WHERE FIDE_DESCRIPCION_ESTADO_SALA = 'DISPONIBLE'
-        ");
-        
-        $db->query("UPDATE FIDE_SALAS_TB SET FIDE_ESTADO_SALA_ID = :estado_id WHERE FIDE_SALA_ID = :sala_id", [
-            'estado_id' => $estadoDisponible,
-            'sala_id' => $hospitalizacion['FIDE_SALA_ID']
-        ]);
-        
-        // Confirmar transacción
-        $db->commit();
-        
-        return [
-            'success' => true,
-            'message' => 'Alta registrada correctamente.'
-        ];
-    } catch (Exception $e) {
-        // Revertir cambios en caso de error
-        $db->rollback();
-        
-        logError("Error en registrarAltaHospitalizacion: " . $e->getMessage());
-        return [
-            'success' => false,
-            'message' => 'Error al registrar el alta: ' . $e->getMessage()
-        ];
+        logError("Error al registrar hospitalización: " . $e->getMessage());
+        showError("No se pudo registrar la hospitalización: " . $e->getMessage());
+        return false;
     }
 }

@@ -4,7 +4,7 @@
 RewriteEngine On
 
 # Definir la base del directorio para las reglas de reescritura
-RewriteBase /pegasus/
+RewriteBase /ProyectoLBDG6/pegasus/
 
 # Redireccionar a HTTPS (descomentarlo cuando esté en producción)
 # RewriteCond %{HTTPS} off
@@ -14,7 +14,7 @@ RewriteBase /pegasus/
 Options -Indexes
 
 # Establecer el directorio de errores
-ErrorDocument 404 /pegasus/error.php
+ErrorDocument 404 /ProyectoLBDG6/pegasus/error.php
 
 # Evitar acceso directo a los archivos de includes y models
 RewriteRule ^includes/ - [F,L]

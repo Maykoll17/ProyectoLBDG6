@@ -1,0 +1,362 @@
+2025-04-23 19:10:44 - Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 19:10:44] [::1] [Not logged in] Error al registrar cierre de sesión: Error al llamar al procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+2025-04-23 19:11:04 - Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 19:11:04] [::1] [user1] Error en login: Error al llamar al procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 20:07:20] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:03:19.434000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 20:07:25] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:03:19.434000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 20:16:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:57] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:57] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:57] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:57] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:57] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:16:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:17:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:17:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:17:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:17:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:17:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:19:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:00] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:00] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:00] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:00] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:00] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:10] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:10] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:10] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:10] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:10] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:20:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 20:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 20:49:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 21:31:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:01:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:01:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:02:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:02:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:02:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:02:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:02:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:26:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:26:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:26:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:26:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:26:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:27:02] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:19] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:23] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:27] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:38] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:27:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:33:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:50] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:33:52] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:48] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:48] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:48] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:48] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:48] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:43:54] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:43:58] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:54:11] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:54:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:15] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:54:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:54:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:56:29] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:56:29] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:56:29] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:56:29] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:56:29] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:17] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 08:32:12.947000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 22:59:18] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:18] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:18] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:18] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 22:59:18] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:03] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:03] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:03] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:03] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:03] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:00:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:03:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:03:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:03:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:03:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:03:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:15:01] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:20:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:20:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:20:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:20:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:20:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:21:14] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:22:06] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:22:06] [::1] [user1] Error al formatear fecha: Failed to parse time string (23-APR-25 11:21:58.200000 PM) at position 26 (P): The timezone could not be found in the database
+[2025-04-23 23:22:28] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:22:34] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:22:46] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:22:49] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:34] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:35] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:24:36] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:29:20] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:28] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:33] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:32:53] [::1] [user1] Error al formatear fecha: Failed to parse time string (18-APR-25 06:47:58.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:41:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:41:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:41:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:41:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:41:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+2025-04-23 23:41:59 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:41:59] [::1] [user1] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:41:59 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:41:59] [::1] [user1] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:42:05 - Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 23:42:05] [::1] [user1] Error al registrar cierre de sesión: Error al llamar al procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+2025-04-23 23:42:18 - Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 23:42:18] [::1] [user8] Error en login: Error al llamar al procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': Error al ejecutar el procedimiento 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC': ORA-06550: line 1, column 7:
+PLS-00201: identifier 'FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+[2025-04-23 23:42:31] [::1] [user8] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:42:31] [::1] [user8] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:42:31] [::1] [user8] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:42:31] [::1] [user8] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:42:31] [::1] [user8] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+2025-04-23 23:42:37 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:42:37] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:42:37 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:42:37] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:42:42 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:42:42] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:42:42 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:42:42] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:21 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:21] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:21 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:21] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:21 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:21] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:21 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:21] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:45:22 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:45:22] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:20 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:20] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:20 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:20] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:21 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:21] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:21 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:21] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:21 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:21] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:21 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:21] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:25 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:25] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:25 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:25] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:26 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:26] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+2025-04-23 23:46:27 - Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+[2025-04-23 23:46:27] [::1] [user8] Error al obtener perfil de usuario: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00904: "U"."FIDE_ULTIMO_ACCESO": invalid identifier
+2025-04-23 23:46:27 - Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:27] [::1] [user8] Error al obtener historial de actividades: Error al ejecutar la consulta: Error al ejecutar la consulta: ORA-00942: table or view does not exist
+[2025-04-23 23:46:35] [::1] [user8] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:46:35] [::1] [user8] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:46:35] [::1] [user8] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:46:35] [::1] [user8] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:46:35] [::1] [user8] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:52:41] [::1] [user8] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:52:41] [::1] [user8] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:52:41] [::1] [user8] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:52:41] [::1] [user8] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:52:41] [::1] [user8] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:08] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:08] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:08] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:08] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:08] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:16] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:22] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:22] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:22] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:22] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:22] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:40] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:47] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (24-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (25-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (26-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (27-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database
+[2025-04-23 23:55:56] [::1] [user1] Error al formatear fecha: Failed to parse time string (28-APR-25 06:43:00.000000 AM) at position 26 (A): The timezone could not be found in the database

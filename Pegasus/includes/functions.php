@@ -135,11 +135,21 @@ function isActiveMenu($path) {
  * @param string $format Formato de salida
  * @return string Fecha formateada
  */
-function formatDate($date, $format = 'd/m/Y') {
-    if (!$date) return '';
-    $datetime = new DateTime($date);
-    return $datetime->format($format);
+function formatDate($fechaOriginal, $formato = 'd/m/Y H:i') {
+    try {
+        // Reemplazar puntos con dos puntos para compatibilidad con PHP
+        $fechaNormalizada = preg_replace('/(\d{2})\.(\d{2})\.(\d{2})/', '$1:$2:$3', $fechaOriginal);
+        
+        // Intentar crear objeto DateTime
+        $fecha = new DateTime($fechaNormalizada);
+
+        return $fecha->format($formato);
+    } catch (Exception $e) {
+        logError("Error al formatear fecha: " . $e->getMessage());
+        return $fechaOriginal; // Devolver original si falla
+    }
 }
+
 
 /**
  * Formatea un número como moneda
@@ -252,6 +262,78 @@ function isValidEmail($email) {
  * @return boolean True si es válido, false en caso contrario
  */
 function isValidPhone($phone) {
-    // Acepta formatos: (123) 456-7890, 123-456-7890, 123.456.7890, 1234567890
-    return preg_match('/^(\+\d{1,3}( )?)?((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$/', $phone);
+    // Acepta 8 a 20 caracteres con dígitos, espacios, +, -, paréntesis
+    return preg_match('/^\+?[0-9\s\-()]{8,20}$/', $phone);
 }
+
+
+/**
+ * Dar de alta a un paciente hospitalizado
+ * 
+ * @param int $hospitalizacion_id ID de la hospitalización
+ * @param string $notas_alta Notas del alta médica
+ * @return bool Éxito o fracaso de la operación
+ */
+function darAltaPaciente($hospitalizacion_id, $notas_alta) {
+    try {
+        // Validar datos
+        if (empty($hospitalizacion_id)) {
+            showError("El ID de hospitalización es obligatorio");
+            return false;
+        }
+        
+        // Obtener la conexión a la base de datos
+        global $db_config;
+        $db = Database::getInstance($db_config);
+        
+        // Iniciar una transacción
+        $db->beginTransaction();
+        
+        try {
+            // Verificar que la hospitalización existe y está activa
+            $query = "SELECT FIDE_SALA_ID 
+                      FROM FIDE_HOSPITALIZACIONES_TB 
+                      WHERE FIDE_HOSPITALIZACION_ID = :id 
+                      AND FIDE_FECHA_ALTA IS NULL 
+                      AND FIDE_ESTADO = 'ACTIVO'";
+            
+            $sala_id = $db->queryValue($query, ['id' => $hospitalizacion_id], 'FIDE_SALA_ID');
+            
+            if (empty($sala_id)) {
+                throw new Exception("La hospitalización no existe o ya ha sido dada de alta");
+            }
+            
+            // Actualizar registro de hospitalización
+            $query = "UPDATE FIDE_HOSPITALIZACIONES_TB 
+                      SET FIDE_FECHA_ALTA = SYSTIMESTAMP, 
+                          FIDE_NOTAS_ALTA = :notas,
+                          FIDE_ESTADO = 'COMPLETADO'
+                      WHERE FIDE_HOSPITALIZACION_ID = :id";
+            
+            $db->query($query, ['id' => $hospitalizacion_id, 'notas' => $notas_alta]);
+            
+            // Actualizar estado de la sala
+            $query = "UPDATE FIDE_SALAS_TB 
+                      SET FIDE_ESTADO_SALA_ID = 1 
+                      WHERE FIDE_SALA_ID = :sala_id";
+            
+            $db->query($query, ['sala_id' => $sala_id]);
+            
+            // Confirmar la transacción
+            $db->commit();
+            
+            showSuccess("Paciente dado de alta correctamente");
+            return true;
+        } catch (Exception $e) {
+            // Revertir la transacción en caso de error
+            $db->rollback();
+            throw $e;
+        }
+    } catch (Exception $e) {
+        logError("Error al dar de alta: " . $e->getMessage());
+        showError("No se pudo dar de alta al paciente: " . $e->getMessage());
+        return false;
+    }
+}
+
+

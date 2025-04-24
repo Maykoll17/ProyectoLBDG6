@@ -15,156 +15,165 @@ if (isLoggedIn()) {
     exit();
 }
 
-// Variable para almacenar errores
-$loginError = '';
+// Incluir archivos necesarios
+require_once '../includes/config.php';
+require_once '../includes/functions.php';
+require_once '../includes/Database.php';
+require_once '../models/auth.php';
 
-// Procesar el formulario
+// Procesar formulario de inicio de sesión
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Verificar CSRF token
-    if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
-        $loginError = 'Error de seguridad: Token inválido.';
-    } else {
-        // Obtener datos del formulario
-        $username = sanitizeInput($_POST['username']);
-        $password = $_POST['password']; // No sanitizamos la contraseña para no alterarla
+    // Obtener datos del formulario
+    $username = sanitizeInput($_POST['username']);
+    $password = $_POST['password']; // No sanitizar password para preservar caracteres especiales
+    
+    // Intentar autenticar
+    $usuario = autenticarUsuario($username, $password);
+    
+    // Si la autenticación fue exitosa
+    if ($usuario) {
+        // Establecer variables de sesión
+        $_SESSION['user_id'] = $usuario['FIDE_USUARIO_ID'];
+        $_SESSION['username'] = $usuario['FIDE_USUARIO_NOMBRE'];
+        $_SESSION['nombre_completo'] = $usuario['FIDE_NOMBRE_COMPLETO'];
+        $_SESSION['user_role'] = $usuario['FIDE_ROL_NOMBRE'];
+        $_SESSION['role_id'] = $usuario['FIDE_ROL_ID'];
         
-        // Validar datos
-        if (empty($username) || empty($password)) {
-            $loginError = 'Por favor, complete todos los campos.';
-        } else {
-            try {
-                global $db_config;
-                $db = Database::getInstance($db_config);
-                
-                // Consultar usuario en la base de datos
-                $query = "SELECT u.FIDE_USUARIO_ID, u.FIDE_NOMBRE_USUARIO, u.FIDE_CONTRASENA, 
-                                 u.FIDE_ROL_ID, r.FIDE_NOMBRE_ROL, u.FIDE_ESTADO_USUARIO
-                          FROM FIDE_USUARIOS_TB u
-                          JOIN FIDE_ROLES_TB r ON u.FIDE_ROL_ID = r.FIDE_ROL_ID
-                          WHERE UPPER(u.FIDE_NOMBRE_USUARIO) = UPPER(:username)";
-                
-                $usuario = $db->queryOne($query, ['username' => $username]);
-                
-                if ($usuario) {
-                    // Verificar estado del usuario
-                    if ($usuario['FIDE_ESTADO_USUARIO'] !== 'ACTIVO') {
-                        $loginError = 'Su cuenta está bloqueada. Contacte al administrador.';
-                    } 
-                    // Verificar contraseña (en un sistema real, debería estar hasheada)
-                    else if ($usuario['FIDE_CONTRASENA'] === $password) {
-                        // Autenticación exitosa - configurar la sesión
-                        $_SESSION['user_id'] = $usuario['FIDE_USUARIO_ID'];
-                        $_SESSION['username'] = $usuario['FIDE_NOMBRE_USUARIO'];
-                        $_SESSION['user_role'] = $usuario['FIDE_NOMBRE_ROL'];
-                        
-                        // Registrar el acceso exitoso
-                        $db->executeProcedure("FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC", [
-                            'p_usuario_id' => $usuario['FIDE_USUARIO_ID'],
-                            'p_ip_acceso' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-                            'p_accion' => 'LOGIN',
-                            'p_resultado' => 'EXITO'
-                        ]);
-                        
-                        // Actualizar última conexión
-                        $db->query("UPDATE FIDE_USUARIOS_TB SET FIDE_ULTIMA_CONEXION = SYSTIMESTAMP WHERE FIDE_USUARIO_ID = :user_id", 
-                                  ['user_id' => $usuario['FIDE_USUARIO_ID']]);
-                        
-                        // Redirigir al dashboard
-                        redirect('/pages/dashboard.php');
-                        exit();
-                    } else {
-                        // Contraseña incorrecta
-                        $loginError = 'Nombre de usuario o contraseña incorrectos.';
-                        
-                        // Incrementar contador de intentos fallidos
-                        $db->query("UPDATE FIDE_USUARIOS_TB SET FIDE_INTENTOS_FALLIDOS = FIDE_INTENTOS_FALLIDOS + 1 WHERE FIDE_USUARIO_ID = :user_id", 
-                                  ['user_id' => $usuario['FIDE_USUARIO_ID']]);
-                        
-                        // Registrar el acceso fallido
-                        $db->executeProcedure("FIDE_SEGURIDAD_PKG.FIDE_REGISTRAR_LOG_ACCESO_PROC", [
-                            'p_usuario_id' => $usuario['FIDE_USUARIO_ID'],
-                            'p_ip_acceso' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-                            'p_accion' => 'LOGIN',
-                            'p_resultado' => 'FALLIDO'
-                        ]);
-                    }
-                } else {
-                    // Usuario no encontrado
-                    $loginError = 'Nombre de usuario o contraseña incorrectos.';
-                }
-            } catch (Exception $e) {
-                logError("Error en login: " . $e->getMessage());
-                $loginError = 'Error del sistema. Intente más tarde.';
-            }
+        // Si es un empleado, guardar su cédula
+        if (isset($usuario['FIDE_EMPLEADO_CEDULA']) && !empty($usuario['FIDE_EMPLEADO_CEDULA'])) {
+            $_SESSION['empleado_cedula'] = $usuario['FIDE_EMPLEADO_CEDULA'];
         }
+        
+        // Redirigir al dashboard
+        redirect('dashboard.php');
     }
 }
-
-// Título de la página
-$pageTitle = 'Iniciar Sesión';
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle . ' - ' . SITE_NAME; ?></title>
+    <title>Iniciar Sesión - Sistema de Gestión Hospitalaria Pegasus</title>
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link href="<?php echo CSS_URL; ?>/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link href="../assets/css/style.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .login-header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="login-container">
-            <div class="brand-logo">
-                <i class="fas fa-hospital"></i>
-                <h1 class="h4"><?php echo SITE_NAME; ?></h1>
-                <p class="text-muted">Sistema de Gestión Hospitalaria</p>
+        <div class="card login-card">
+            <div class="login-header">
+                <img src="../assets/img/logo.png" alt="Logo Pegasus" class="logo">
+                <h2>Sistema de Gestión Hospitalaria</h2>
+                <p class="text-muted">Inicie sesión para continuar</p>
             </div>
             
-            <?php if (!empty($loginError)): ?>
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-exclamation-circle"></i> <?php echo $loginError; ?>
+            <div class="card-body p-4">
+                <?php 
+                // Mostrar mensajes
+                if ($error = getMessage('error')): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo $error; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($success = getMessage('success')): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo $success; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                
+                <form method="post" action="">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" required 
+                                   placeholder="Nombre de usuario" autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required 
+                                   placeholder="Contraseña">
+                            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="forgot-password.php" class="text-decoration-none">¿Olvidó su contraseña?</a>
+                </div>
             </div>
-            <?php endif; ?>
             
-            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
-                
-                <div class="mb-3">
-                    <label for="username" class="form-label">Nombre de Usuario</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control" id="username" name="username" required autofocus>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                </div>
-                
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </button>
-                </div>
-                
-                <div class="mt-3 text-center">
-                    <a href="<?php echo BASE_URL; ?>/pages/recuperar-password.php">¿Olvidaste tu contraseña?</a>
-                </div>
-            </form>
+            <div class="card-footer text-center py-3">
+                <p class="mb-0">&copy; <?php echo date('Y'); ?> Pegasus Hospital Management</p>
+            </div>
         </div>
     </div>
     
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="../assets/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts personalizados -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.querySelector('.toggle-password');
+            
+            toggleButton.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const inputField = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (inputField.type === 'password') {
+                    inputField.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    inputField.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -20,6 +20,11 @@ class Database {
         $this->connect();
     }
     
+
+    public function getConnection() {
+        return $this->connection;
+    }
+    
     /**
      * Obtener instancia única de la base de datos (patrón singleton)
      */
