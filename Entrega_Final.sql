@@ -3633,7 +3633,1029 @@ CREATE OR REPLACE PACKAGE BODY fide_dashboard_pkg AS
 END fide_dashboard_pkg;
 /
 
+---18. Admin de facturas
 
+CREATE OR REPLACE PACKAGE fide_admin_facturas_pkg AS
+    PROCEDURE fide_leer_facturas_proc;
+
+    PROCEDURE fide_actualizar_factura_proc (
+        p_factura_id     IN NUMBER,
+        p_nuevo_total    IN NUMBER,
+        p_estado_factura IN VARCHAR2
+    );
+
+    PROCEDURE fide_eliminar_factura_proc (
+        p_factura_id IN NUMBER
+    );
+
+    PROCEDURE fide_leer_detalles_proc (
+        p_factura_id IN NUMBER
+    );
+
+    PROCEDURE fide_eliminar_detalles_proc (
+        p_factura_id IN NUMBER
+    );
+
+END fide_admin_facturas_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_admin_facturas_pkg AS
+
+    PROCEDURE fide_leer_facturas_proc IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_facturas_tb
+        ) LOOP
+            dbms_output.put_line('Factura ID: '
+                                 || r.fide_factura_id
+                                 || ' | Paciente: '
+                                 || r.fide_paciente_cedula
+                                 || ' | Total: '
+                                 || r.fide_total_factura
+                                 || ' | Estado: '
+                                 || r.fide_estado_factura);
+        END LOOP;
+    END;
+
+    PROCEDURE fide_actualizar_factura_proc (
+        p_factura_id     IN NUMBER,
+        p_nuevo_total    IN NUMBER,
+        p_estado_factura IN VARCHAR2
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line('Error: La factura con ID '
+                                 || p_factura_id
+                                 || ' no existe.');
+            RETURN;
+        END IF;
+
+        UPDATE fide_facturas_tb
+        SET
+            fide_total_factura = p_nuevo_total,
+            fide_estado_factura = p_estado_factura
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('Factura actualizada exitosamente.');
+    END;
+
+    PROCEDURE fide_eliminar_factura_proc (
+        p_factura_id IN NUMBER
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line('Error: La factura con ID '
+                                 || p_factura_id
+                                 || ' no existe.');
+            RETURN;
+        END IF;
+
+        DELETE FROM fide_recibos_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        DELETE FROM fide_detalles_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        DELETE FROM fide_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('Factura eliminada correctamente.');
+    END;
+
+    PROCEDURE fide_leer_detalles_proc (
+        p_factura_id IN NUMBER
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_detalles_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line('No se encontraron detalles para la factura ID: ' || p_factura_id);
+            RETURN;
+        END IF;
+
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_detalles_facturas_tb
+            WHERE
+                fide_factura_id = p_factura_id
+        ) LOOP
+            dbms_output.put_line('Detalle ID: '
+                                 || r.fide_detalle_factura_id
+                                 || ' | Descripción: '
+                                 || r.fide_descripcion_factura
+                                 || ' | Monto: '
+                                 || r.fide_monto_factura);
+        END LOOP;
+
+    END;
+
+    PROCEDURE fide_eliminar_detalles_proc (
+        p_factura_id IN NUMBER
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_detalles_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line('No hay detalles que eliminar para la factura ID: ' || p_factura_id);
+            RETURN;
+        END IF;
+
+        DELETE FROM fide_detalles_facturas_tb
+        WHERE
+            fide_factura_id = p_factura_id;
+
+        dbms_output.put_line('Detalles de la factura eliminados correctamente.');
+    END;
+
+END fide_admin_facturas_pkg;
+/
+
+---19. CRUD para tablas clínicas como historial médico, hospitalizaciones, estados de pacientes y recibos
+
+CREATE OR REPLACE PACKAGE fide_admin_clinico_pkg AS
+    PROCEDURE leer_pacientes;
+
+    PROCEDURE crear_paciente (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    );
+
+    PROCEDURE actualizar_paciente (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    );
+
+    PROCEDURE eliminar_paciente (
+        p_cedula IN VARCHAR2
+    );
+
+    PROCEDURE leer_historial_medico;
+
+    PROCEDURE crear_historial (
+        p_paciente_cedula IN VARCHAR2,
+        p_observacion     IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_historial (
+        p_historial_id IN NUMBER,
+        p_observacion  IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_historial (
+        p_historial_id IN NUMBER
+    );
+
+    PROCEDURE leer_estados_pacientes;
+
+    PROCEDURE leer_hospitalizaciones;
+
+    PROCEDURE crear_hospitalizacion (
+        p_paciente_cedula IN VARCHAR2,
+        p_fecha_inicio    IN DATE
+    );
+
+    PROCEDURE eliminar_hospitalizacion (
+        p_hosp_id IN NUMBER
+    );
+
+    PROCEDURE leer_recibos;
+
+    PROCEDURE crear_recibo (
+        p_factura_id IN NUMBER,
+        p_monto      IN NUMBER,
+        p_metodo     IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_recibo (
+        p_recibo_id IN NUMBER
+    );
+
+END fide_admin_clinico_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_admin_clinico_pkg AS
+
+    PROCEDURE leer_historial_medico IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_historial_medico_tb
+        ) LOOP
+            dbms_output.put_line('Historial ID: '
+                                 || r.fide_historial_id
+                                 || ' | Paciente: '
+                                 || r.fide_paciente_cedula
+                                 || ' | Observaciones: '
+                                 || r.fide_observaciones);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_historial (
+        p_paciente_cedula IN VARCHAR2,
+        p_observacion     IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_historial_medico_tb (
+            fide_paciente_cedula,
+            fide_observaciones
+        ) VALUES ( p_paciente_cedula,
+                   p_observacion );
+
+        dbms_output.put_line('Historial creado.');
+    END;
+
+    PROCEDURE actualizar_historial (
+        p_historial_id IN NUMBER,
+        p_observacion  IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_historial_medico_tb
+        SET
+            fide_observaciones = p_observacion
+        WHERE
+            fide_historial_id = p_historial_id;
+
+        dbms_output.put_line('Historial actualizado.');
+    END;
+
+    PROCEDURE eliminar_historial (
+        p_historial_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_historial_medico_tb
+        WHERE
+            fide_historial_id = p_historial_id;
+
+        dbms_output.put_line('Historial eliminado.');
+    END;
+
+    PROCEDURE leer_estados_pacientes IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_estados_pacientes_tb
+        ) LOOP
+            dbms_output.put_line('Estado paciente ID: ' || r.fide_estado_paciente_id);
+        END LOOP;
+    END;
+
+    PROCEDURE leer_hospitalizaciones IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_hospitalizaciones_tb
+        ) LOOP
+            dbms_output.put_line('Hospitalización ID: ' || r.fide_hospitalizacion_id);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_hospitalizacion (
+        p_paciente_cedula IN VARCHAR2,
+        p_fecha_inicio    IN DATE
+    ) IS
+    BEGIN
+        INSERT INTO fide_hospitalizaciones_tb (
+            fide_paciente_cedula,
+            fide_fecha_ingreso
+        ) VALUES ( p_paciente_cedula,
+                   p_fecha_inicio );
+
+        dbms_output.put_line('Hospitalización registrada.');
+    END;
+
+    PROCEDURE eliminar_hospitalizacion (
+        p_hosp_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_hospitalizaciones_tb
+        WHERE
+            fide_hospitalizacion_id = p_hosp_id;
+
+        dbms_output.put_line('Hospitalización eliminada.');
+    END;
+
+    PROCEDURE leer_recibos IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_recibos_tb
+        ) LOOP
+            dbms_output.put_line('Recibo ID: '
+                                 || r.fide_recibo_id
+                                 || ' | Factura: '
+                                 || r.fide_factura_id
+                                 || ' | Monto: '
+                                 || r.fide_monto_pagado);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_recibo (
+        p_factura_id IN NUMBER,
+        p_monto      IN NUMBER,
+        p_metodo     IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_recibos_tb (
+            fide_factura_id,
+            fide_monto_pagado,
+            fide_metodo_pago
+        ) VALUES ( p_factura_id,
+                   p_monto,
+                   p_metodo );
+
+        dbms_output.put_line('Recibo registrado.');
+    END;
+
+    PROCEDURE eliminar_recibo (
+        p_recibo_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_recibos_tb
+        WHERE
+            fide_recibo_id = p_recibo_id;
+
+        dbms_output.put_line('Recibo eliminado.');
+    END;
+
+    PROCEDURE leer_pacientes IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_pacientes_tb
+        ) LOOP
+            dbms_output.put_line('Paciente: '
+                                 || r.fide_paciente_cedula
+                                 || ' | Nombre: '
+                                 || r.fide_nombre_paciente);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_paciente (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    ) IS
+    BEGIN
+        INSERT INTO fide_pacientes_tb (
+            fide_paciente_cedula,
+            fide_nombre_paciente,
+            fide_apellidos_paciente,
+            fide_telefono_paciente,
+            fide_direccion_paciente,
+            fide_correo_paciente,
+            fide_estado_paciente_id,
+            fide_deuda_paciente
+        ) VALUES ( p_cedula,
+                   p_nombre,
+                   p_apellidos,
+                   p_telefono,
+                   p_direccion,
+                   p_correo,
+                   p_estado_id,
+                   p_deuda );
+
+        dbms_output.put_line('Paciente creado.');
+    END;
+
+    PROCEDURE actualizar_paciente (
+        p_cedula    IN VARCHAR2,
+        p_nombre    IN VARCHAR2,
+        p_apellidos IN VARCHAR2,
+        p_telefono  IN VARCHAR2,
+        p_direccion IN VARCHAR2,
+        p_correo    IN VARCHAR2,
+        p_estado_id IN NUMBER,
+        p_deuda     IN NUMBER
+    ) IS
+    BEGIN
+        UPDATE fide_pacientes_tb
+        SET
+            fide_nombre_paciente = p_nombre,
+            fide_apellidos_paciente = p_apellidos,
+            fide_telefono_paciente = p_telefono,
+            fide_direccion_paciente = p_direccion,
+            fide_correo_paciente = p_correo,
+            fide_estado_paciente_id = p_estado_id,
+            fide_deuda_paciente = p_deuda
+        WHERE
+            fide_paciente_cedula = p_cedula;
+
+        dbms_output.put_line('Paciente actualizado.');
+    END;
+
+    PROCEDURE eliminar_paciente (
+        p_cedula IN VARCHAR2
+    ) IS
+    BEGIN
+        DELETE FROM fide_pacientes_tb
+        WHERE
+            fide_paciente_cedula = p_cedula;
+
+        dbms_output.put_line('Paciente eliminado.');
+    END;
+
+END fide_admin_clinico_pkg;
+/
+
+---20. CRUD para empleados, roles, tipos, y permisos
+
+CREATE OR REPLACE PACKAGE fide_admin_personal_pkg AS
+    PROCEDURE leer_empleados;
+
+    PROCEDURE crear_empleado (
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_empleado (
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_empleado (
+        p_cedula IN VARCHAR2
+    );
+
+    PROCEDURE leer_tipos_empleados;
+
+    PROCEDURE crear_tipo_empleado (
+        p_descripcion IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_tipo_empleado (
+        p_tipo_id     IN NUMBER,
+        p_descripcion IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_tipo_empleado (
+        p_tipo_id IN NUMBER
+    );
+
+    PROCEDURE leer_roles;
+
+    PROCEDURE crear_rol (
+        p_nombre IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_rol (
+        p_rol_id IN NUMBER,
+        p_nombre IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_rol (
+        p_rol_id IN NUMBER
+    );
+
+    PROCEDURE leer_permisos;
+
+    PROCEDURE crear_permiso (
+        p_descripcion IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_permiso (
+        p_permiso_id  IN NUMBER,
+        p_descripcion IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_permiso (
+        p_permiso_id IN NUMBER
+    );
+
+    PROCEDURE leer_roles_permisos;
+
+    PROCEDURE crear_rol_permiso (
+        p_rol_id     IN NUMBER,
+        p_permiso_id IN NUMBER
+    );
+
+    PROCEDURE eliminar_rol_permiso (
+        p_rol_id     IN NUMBER,
+        p_permiso_id IN NUMBER
+    );
+
+END fide_admin_personal_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_admin_personal_pkg AS
+
+    PROCEDURE leer_empleados IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_empleados_tb
+        ) LOOP
+            dbms_output.put_line('Empleado: '
+                                 || r.fide_empleado_cedula
+                                 || ' | Nombre: '
+                                 || r.fide_nombre_empleado);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_empleado (
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_empleados_tb (
+            fide_empleado_cedula,
+            fide_nombre_empleado
+        ) VALUES ( p_cedula,
+                   p_nombre );
+
+        dbms_output.put_line('Empleado creado.');
+    END;
+
+    PROCEDURE actualizar_empleado (
+        p_cedula IN VARCHAR2,
+        p_nombre IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_empleados_tb
+        SET
+            fide_nombre_empleado = p_nombre
+        WHERE
+            fide_empleado_cedula = p_cedula;
+
+        dbms_output.put_line('Empleado actualizado.');
+    END;
+
+    PROCEDURE eliminar_empleado (
+        p_cedula IN VARCHAR2
+    ) IS
+    BEGIN
+        DELETE FROM fide_empleados_tb
+        WHERE
+            fide_empleado_cedula = p_cedula;
+
+        dbms_output.put_line('Empleado eliminado.');
+    END;
+
+    PROCEDURE leer_tipos_empleados IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_tipos_empleados_tb
+        ) LOOP
+            dbms_output.put_line('Tipo ID: '
+                                 || r.fide_tipo_empleado_id
+                                 || ' | Descripción: '
+                                 || r.fide_descripcion_tipo_empleado);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_tipo_empleado (
+        p_descripcion IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_tipos_empleados_tb ( fide_descripcion_tipo_empleado ) VALUES ( p_descripcion );
+
+        dbms_output.put_line('Tipo de empleado creado.');
+    END;
+
+    PROCEDURE actualizar_tipo_empleado (
+        p_tipo_id     IN NUMBER,
+        p_descripcion IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_tipos_empleados_tb
+        SET
+            fide_descripcion_tipo_empleado = p_descripcion
+        WHERE
+            fide_tipo_empleado_id = p_tipo_id;
+
+        dbms_output.put_line('Tipo de empleado actualizado.');
+    END;
+
+    PROCEDURE eliminar_tipo_empleado (
+        p_tipo_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_tipos_empleados_tb
+        WHERE
+            fide_tipo_empleado_id = p_tipo_id;
+
+        dbms_output.put_line('Tipo de empleado eliminado.');
+    END;
+
+    PROCEDURE leer_roles IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_roles_tb
+        ) LOOP
+            dbms_output.put_line('Rol ID: '
+                                 || r.fide_rol_id
+                                 || ' | Nombre: '
+                                 || r.fide_nombre_rol);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_rol (
+        p_nombre IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_roles_tb ( fide_nombre_rol ) VALUES ( p_nombre );
+
+        dbms_output.put_line('Rol creado.');
+    END;
+
+    PROCEDURE actualizar_rol (
+        p_rol_id IN NUMBER,
+        p_nombre IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_roles_tb
+        SET
+            fide_nombre_rol = p_nombre
+        WHERE
+            fide_rol_id = p_rol_id;
+
+        dbms_output.put_line('Rol actualizado.');
+    END;
+
+    PROCEDURE eliminar_rol (
+        p_rol_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_roles_tb
+        WHERE
+            fide_rol_id = p_rol_id;
+
+        dbms_output.put_line('Rol eliminado.');
+    END;
+
+    PROCEDURE leer_permisos IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_permisos_tb
+        ) LOOP
+            dbms_output.put_line('Permiso ID: '
+                                 || r.fide_permiso_id
+                                 || ' | Descripción: '
+                                 || r.fide_descripcion_permiso);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_permiso (
+        p_descripcion IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_permisos_tb ( fide_descripcion_permiso ) VALUES ( p_descripcion );
+
+        dbms_output.put_line('Permiso creado.');
+    END;
+
+    PROCEDURE actualizar_permiso (
+        p_permiso_id  IN NUMBER,
+        p_descripcion IN VARCHAR2
+    ) IS
+    BEGIN
+        UPDATE fide_permisos_tb
+        SET
+            fide_descripcion_permiso = p_descripcion
+        WHERE
+            fide_permiso_id = p_permiso_id;
+
+        dbms_output.put_line('Permiso actualizado.');
+    END;
+
+    PROCEDURE eliminar_permiso (
+        p_permiso_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_permisos_tb
+        WHERE
+            fide_permiso_id = p_permiso_id;
+
+        dbms_output.put_line('Permiso eliminado.');
+    END;
+
+    PROCEDURE leer_roles_permisos IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_roles_permisos_tb
+        ) LOOP
+            dbms_output.put_line('Rol: '
+                                 || r.fide_rol_id
+                                 || ' | Permiso: '
+                                 || r.fide_permiso_id);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_rol_permiso (
+        p_rol_id     IN NUMBER,
+        p_permiso_id IN NUMBER
+    ) IS
+    BEGIN
+        INSERT INTO fide_roles_permisos_tb (
+            fide_rol_id,
+            fide_permiso_id
+        ) VALUES ( p_rol_id,
+                   p_permiso_id );
+
+        dbms_output.put_line('Relación rol-permiso creada.');
+    END;
+
+    PROCEDURE eliminar_rol_permiso (
+        p_rol_id     IN NUMBER,
+        p_permiso_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_roles_permisos_tb
+        WHERE
+                fide_rol_id = p_rol_id
+            AND fide_permiso_id = p_permiso_id;
+
+        dbms_output.put_line('Relación rol-permiso eliminada.');
+    END;
+
+END fide_admin_personal_pkg;
+/
+
+
+--21. CRUD para tablas del sistema: usuarios, tokens, logs, notificaciones
+
+CREATE OR REPLACE PACKAGE fide_admin_sistema_pkg AS
+    PROCEDURE leer_usuarios;
+
+    PROCEDURE crear_usuario (
+        p_nombre IN VARCHAR2
+    );
+
+    PROCEDURE actualizar_usuario (
+        p_usuario_id IN NUMBER,
+        p_nombre     IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_usuario (
+        p_usuario_id IN NUMBER
+    );
+
+    PROCEDURE leer_tokens_seguridad;
+
+    PROCEDURE crear_token (
+        p_usuario_id IN NUMBER
+    );
+
+    PROCEDURE eliminar_token (
+        p_token_id IN NUMBER
+    );
+
+    PROCEDURE leer_logs_acceso;
+
+    PROCEDURE leer_notificaciones;
+
+    PROCEDURE crear_notificacion (
+        p_asunto IN VARCHAR2,
+        p_cuerpo IN VARCHAR2
+    );
+
+    PROCEDURE eliminar_notificacion (
+        p_notificacion_id IN NUMBER
+    );
+
+END fide_admin_sistema_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY fide_admin_sistema_pkg AS
+
+    PROCEDURE leer_usuarios IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_usuarios_tb
+        ) LOOP
+            dbms_output.put_line('Usuario ID: '
+                                 || r.fide_usuario_id
+                                 || ' | Nombre: '
+                                 || r.fide_nombre_usuario);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_usuario (
+        p_nombre IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_usuarios_tb ( fide_nombre_usuario ) VALUES ( p_nombre );
+
+        dbms_output.put_line('Usuario creado.');
+    END;
+
+    PROCEDURE actualizar_usuario (
+        p_usuario_id IN NUMBER,
+        p_nombre     IN VARCHAR2
+    ) IS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            fide_usuarios_tb
+        WHERE
+            fide_usuario_id = p_usuario_id;
+
+        IF v_count = 0 THEN
+            dbms_output.put_line('No se encontró el usuario ID: ' || p_usuario_id);
+            RETURN;
+        END IF;
+
+        UPDATE fide_usuarios_tb
+        SET
+            fide_nombre_usuario = p_nombre
+        WHERE
+            fide_usuario_id = p_usuario_id;
+
+        dbms_output.put_line('Usuario actualizado.');
+    END;
+
+    PROCEDURE eliminar_usuario (
+        p_usuario_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_usuarios_tb
+        WHERE
+            fide_usuario_id = p_usuario_id;
+
+        dbms_output.put_line('Usuario eliminado.');
+    END;
+
+    PROCEDURE leer_tokens_seguridad IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_tokens_seguridad_tb
+        ) LOOP
+            dbms_output.put_line('Token ID: '
+                                 || r.fide_token_id
+                                 || ' | Usuario: '
+                                 || r.fide_usuario_id);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_token (
+        p_usuario_id IN NUMBER
+    ) IS
+    BEGIN
+        INSERT INTO fide_tokens_seguridad_tb ( fide_usuario_id ) VALUES ( p_usuario_id );
+
+        dbms_output.put_line('Token creado para usuario ID: ' || p_usuario_id);
+    END;
+
+    PROCEDURE eliminar_token (
+        p_token_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_tokens_seguridad_tb
+        WHERE
+            fide_token_id = p_token_id;
+
+        dbms_output.put_line('Token eliminado.');
+    END;
+
+    PROCEDURE leer_logs_acceso IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_logs_acceso_tb
+        ) LOOP
+            dbms_output.put_line('Log ID: '
+                                 || r.fide_log_id
+                                 || ' | Usuario: '
+                                 || r.fide_usuario_id
+                                 || ' | Fecha: '
+                                 || to_char(r.fide_fecha_acceso, 'YYYY-MM-DD HH24:MI'));
+        END LOOP;
+    END;
+
+    PROCEDURE leer_notificaciones IS
+    BEGIN
+        FOR r IN (
+            SELECT
+                *
+            FROM
+                fide_notificaciones_tb
+        ) LOOP
+            dbms_output.put_line('Notificación ID: '
+                                 || r.fide_notificacion_id
+                                 || ' | Asunto: '
+                                 || r.fide_asunto);
+        END LOOP;
+    END;
+
+    PROCEDURE crear_notificacion (
+        p_asunto IN VARCHAR2,
+        p_cuerpo IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO fide_notificaciones_tb (
+            fide_asunto,
+            fide_cuerpo
+        ) VALUES ( p_asunto,
+                   p_cuerpo );
+
+        dbms_output.put_line('Notificación creada.');
+    END;
+
+    PROCEDURE eliminar_notificacion (
+        p_notificacion_id IN NUMBER
+    ) IS
+    BEGIN
+        DELETE FROM fide_notificaciones_tb
+        WHERE
+            fide_notificacion_id = p_notificacion_id;
+
+        dbms_output.put_line('Notificación eliminada.');
+    END;
+
+END fide_admin_sistema_pkg;
+/
 
 
 
